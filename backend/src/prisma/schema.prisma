@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Lead {
-  id            String   @id @default(auto()) @map("_id") // MongoDB ObjectId
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId // MongoDB ObjectId
   name          String
   residenceAdd  String
   contactNo     String
@@ -17,14 +17,14 @@ model Lead {
   budget        String
   howHeard      HowHeard[]
   referredBy    Agent?   @relation(fields: [agentId], references: [id])
-  agentId       String?  // Foreign key to Agent
+  agentId       String?  @db.ObjectId// Foreign key to Agent
   projectDetail String?
   location      String?
   createdAt     DateTime @default(now())
 }
 
 model Agent {
-  id       String   @id @default(auto()) @map("_id")
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
   name     String
   email    String   @unique
   password String?  // Made optional
@@ -33,11 +33,14 @@ model Agent {
 }
 
 enum Requirement {
-  _1RK
-  _1BHK
-  _2BHK
+  R_1RK @map("1RK")
+  R_1BHK @map("1BHK")
+  R_2BHK @map("2BHK")
+  R_3BHK @map("3BHK")
+  R_4BHK @map("4BHK")
   SHOP
 }
+
 
 enum HowHeard {
   HORDING

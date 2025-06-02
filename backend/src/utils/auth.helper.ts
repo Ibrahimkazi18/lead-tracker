@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import redis from "./redis";
 import { sendEmail } from "./send-email";
 import prisma from "./prisma";
-import { ValidationError } from "../src/packages";
+import { ValidationError } from "../packages";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -98,7 +98,7 @@ export const verifyOtp = async (email: string, otp: string, next:NextFunction) =
     await redis.del(`otp:${email}`, failedAttemptsKey);
 }
 
-export const handleForgotPassword = async (req: Request, res: Response, next:NextFunction, userType: "user" | "seller") => {
+export const handleForgotPassword = async (req: Request, res: Response, next:NextFunction) => {
     try {
         const { email } = req.body;
 
@@ -107,13 +107,10 @@ export const handleForgotPassword = async (req: Request, res: Response, next:Nex
         }
 
         // user or seller in db
-        const user = userType === "user"
-                       ? await prisma.users.findUnique({ where : { email }})
-                       : await prisma.sellers.findUnique({ where : { email }});
-                        
+        const user = await prisma.agent.findUnique({ where : { email }})      
 
         if(!user) {
-            return next(new ValidationError(`${userType} not found.`));
+            return next(new ValidationError(`Agent not found.`));
         }
 
         // Check otp restrictions
@@ -121,7 +118,7 @@ export const handleForgotPassword = async (req: Request, res: Response, next:Nex
         await trackOtp(email, next);
         
         // generate and send otp if all is good
-        await sendOtp(user.name, email, userType === 'user' ? 'forgot-password-user-mail' : 'forgot-password-seller-mail');
+        await sendOtp(user.name, email, 'forgot-password-user-mail');
 
         res.status(200).json({
             message: "OTP sent to email. Please verify your account."
