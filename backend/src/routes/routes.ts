@@ -1,10 +1,11 @@
 import express, { Router } from "express";
-import { getUser, loginUser, refreshToken, resetUserPassword, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
+import { getUser, googleLogin, loginUser, refreshToken, resetUserPassword, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
 import isAuthenticated from "../utils/middleware/isAuthenticated";
 
 const router: Router = express.Router();
 
 // Authentication
+router.post("/google-auth", googleLogin);
 router.post("/user-registration", userRegistration);
 router.post("/verify-user", verifyUser);
 router.post("/login-user", loginUser);

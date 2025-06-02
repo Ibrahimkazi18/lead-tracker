@@ -5,6 +5,74 @@ import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import prisma from "../utils/prisma";
 import { AuthError, ValidationError } from "../packages";
 import { setCookie } from "../utils/cookies/setCookie";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+// google signup/login
+export const googleLogin = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return next(new ValidationError("No Google token provided."));
+    }
+
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    if (!payload || !payload.email || !payload.name) {
+      return next(new ValidationError("Google login failed. Invalid credentials."));
+    }
+
+    const { email, name } = payload;
+
+    let user = await prisma.agent.findUnique({ where: { email } });
+
+    // Create user if not found
+    if (!user) {
+      user = await prisma.agent.create({
+        data: {
+          email,
+          name,
+          password: "", // empty password as it's Google-authenticated
+        },
+      });
+    }
+
+    // Generate tokens
+    const accessToken = jwt.sign(
+      { user: user.id, role: "user" },
+      process.env.ACCESS_TOKEN_SECRET as string,
+      { expiresIn: "1d" }
+    );
+
+    const refreshToken = jwt.sign(
+      { user: user.id, role: "user" },
+      process.env.REFRESH_TOKEN_SECRET as string,
+      { expiresIn: "7d" }
+    );
+
+    setCookie(res, "refresh_token", refreshToken);
+    setCookie(res, "access_token", accessToken);
+
+    res.status(200).json({
+      message: "Google login successful!",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 
 // Register a new user 
 export const userRegistration = async (req:Request, res:Response, next:NextFunction) => {
