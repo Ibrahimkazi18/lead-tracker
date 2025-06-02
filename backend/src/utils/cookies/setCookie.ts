@@ -10,10 +10,10 @@ export const setCookie = (res: Response, name: string, value: string) => {
     else {
         time = 24 * 60 * 60 * 1000;    // 1 day
     }
- 
+    
     res.cookie(name, value, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
         sameSite: "none",
         maxAge: time,   // 7 dayss or 1 day
     })

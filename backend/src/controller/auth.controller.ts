@@ -43,16 +43,16 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
         },
       });
     }
-
+    
     // Generate tokens
     const accessToken = jwt.sign(
-      { user: user.id, role: "user" },
+      { id: user.id, email: user.email, role: "user" },
       process.env.ACCESS_TOKEN_SECRET as string,
       { expiresIn: "1d" }
     );
 
     const refreshToken = jwt.sign(
-      { user: user.id, role: "user" },
+      { id: user.id, email: user.email, role: "user" },
       process.env.REFRESH_TOKEN_SECRET as string,
       { expiresIn: "7d" }
     );
@@ -61,6 +61,7 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
     setCookie(res, "access_token", accessToken);
 
     res.status(200).json({
+      accessToken,
       message: "Google login successful!",
       user: {
         id: user.id,
@@ -163,13 +164,13 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
 
         // Generate access and refresh token
         const accessToken = jwt.sign(
-            { user: user.id, role: "user" }, 
+            { id: user.id, email: user.email, role: "user" }, 
             process.env.ACCESS_TOKEN_SECRET as string,
             { expiresIn: "1d" }
         );
         
         const refreshToken = jwt.sign(
-            { user: user.id, role: "user" }, 
+            { id: user.id, email: user.email, role: "user" }, 
             process.env.REFRESH_TOKEN_SECRET as string,
             { expiresIn: "7d" }
         );
@@ -203,13 +204,13 @@ export const refreshToken = async (req:any, res:Response, next:NextFunction) => 
             throw new ValidationError('Unauthorized! No refresh token.')
         }
 
-        const decoded = jwt.verify(refreshTok, process.env.REFRESH_TOKEN_SECRET as string) as { id : string, role : string, user : string, seller : string};
+        const decoded = jwt.verify(refreshTok, process.env.REFRESH_TOKEN_SECRET as string) as { id : string, role : string, email:string};
 
-        if (!decoded || !decoded.id || !decoded.role) {
+        if (!decoded) {
             throw new JsonWebTokenError('Forbidden! Invalid refresh token.');
         }
         
-        const account = await prisma.agent.findUnique({ where : { id : decoded.id ? decoded.id : decoded.user }});
+        const account = await prisma.agent.findUnique({ where : { email : decoded.email }});
 
         if(!account) {
             throw new AuthError("Forbidden! User or Seller not found");
