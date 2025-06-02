@@ -6,9 +6,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import router from "./routes/routes";
 
-console.log("REDIS_DATABASE_URL:", process.env.REDIS_DATABASE_URL);
 import redis from "./utils/redis";
-console.log("REDIS_DATABASE_URL:", process.env.REDIS_DATABASE_URL);
 
 const app = express();
 const PORT = process.env.PORT || 5000;

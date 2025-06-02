@@ -4,6 +4,7 @@ import isAuthenticated from "../utils/middleware/isAuthenticated";
 
 const router: Router = express.Router();
 
+// Authentication
 router.post("/user-registration", userRegistration);
 router.post("/verify-user", verifyUser);
 router.post("/login-user", loginUser);
@@ -12,5 +13,17 @@ router.get("/logged-in-user", isAuthenticated, getUser);
 router.post("/forgot-password-user", userForgotPassword);
 router.post("/verify-forgot-password-user", verifyForgotPassword);
 router.post("/reset-password-user", resetUserPassword);
+
+// Referred Agents
+
+
+// Leads add get delete
+
+
+// Add visits
+
+
+// delete account / logout
+
 
 export default router;
