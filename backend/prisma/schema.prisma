@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,3 +7,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Lead {
+  id            String   @id @default(auto()) @map("_id") // MongoDB ObjectId
+  name          String
+  residenceAdd  String
+  contactNo     String
+  email         String
+  requirement   Requirement
+  budget        String
+  howHeard      HowHeard[]
+  referredBy    Agent?   @relation(fields: [agentId], references: [id])
+  agentId       String?  // Foreign key to Agent
+  projectDetail String?
+  location      String?
+  createdAt     DateTime @default(now())
+}
+
+model Agent {
+  id       String   @id @default(auto()) @map("_id")
+  name     String
+  email    String   @unique
+  password String?  // Made optional
+  image    String?  // Optional Google profile picture
+  leads    Lead[]
+}
+
+enum Requirement {
+  _1RK
+  _1BHK
+  _2BHK
+  SHOP
+}
+
+enum HowHeard {
+  HORDING
+  FRIENDS
+  STANDEY
+  OTHER_SOURCES
+}
