@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { getAllAgents, getReferralAgents, getUser, googleLogin, loginUser, refreshToken, resetUserPassword, updateAgent, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
+import { deleteReferralAgent, getAllAgents, getAllAgentsForReferral, getReferralAgents, getUser, googleLogin, loginUser, logoutUser, refreshToken, resetUserPassword, updateAgent, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
 import isAuthenticated from "../utils/middleware/isAuthenticated";
 
 const router: Router = express.Router();
@@ -16,9 +16,11 @@ router.post("/verify-forgot-password-user", verifyForgotPassword);
 router.post("/reset-password-user", resetUserPassword);
 
 // Referred Agents
-router.get("/get-all-agents", getAllAgents);
-router.put("/add-agent", updateAgent);
-router.get("/get-referrals", getReferralAgents);
+router.get("/get-all-agents", isAuthenticated , getAllAgents);
+router.get("/get-available-agents", isAuthenticated , getAllAgentsForReferral);
+router.put("/add-agent", isAuthenticated , updateAgent);
+router.get("/get-referrals/:id", isAuthenticated , getReferralAgents);
+router.delete("/delete-referral-agent/:id", isAuthenticated , deleteReferralAgent);
 
 // Leads add get delete
 
@@ -26,7 +28,10 @@ router.get("/get-referrals", getReferralAgents);
 // Add visits
 
 
-// delete account / logout
+// delete account
 
+
+// logout
+router.post("/logout-user", logoutUser);
 
 export default router;

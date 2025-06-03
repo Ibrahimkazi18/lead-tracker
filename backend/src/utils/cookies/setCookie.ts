@@ -14,7 +14,7 @@ export const setCookie = (res: Response, name: string, value: string) => {
     res.cookie(name, value, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: time,   // 7 dayss or 1 day
     })
 };

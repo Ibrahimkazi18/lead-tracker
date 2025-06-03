@@ -1,6 +1,7 @@
 import './globals.css';
 import { Roboto, Poppins } from "next/font/google"
 import Providers from './providers';
+import Script from "next/script";
 
 export const metadata = {
   title: 'Lead Tracker',
@@ -27,6 +28,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        {/* Google Identity Services script */}
+        <Script
+          src="https://accounts.google.com/gsi/client"
+          strategy="beforeInteractive"
+        />
+      </head>
       <body className={`${roboto.variable} ${poppins.variable}`}>
         <Providers>
         {children}

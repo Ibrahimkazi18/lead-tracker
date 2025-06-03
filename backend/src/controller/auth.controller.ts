@@ -6,6 +6,7 @@ import prisma from "../utils/prisma";
 import { AuthError, ValidationError } from "../packages";
 import { setCookie } from "../utils/cookies/setCookie";
 import { OAuth2Client } from "google-auth-library";
+import { serialize } from "cookie";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -309,9 +310,75 @@ export const resetUserPassword = async (req: Request, res: Response, next: NextF
     }
 }
 
+export const logoutUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // Clear both access and refresh tokens
+    res.setHeader("Set-Cookie", [
+      serialize("access_token", "", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        expires: new Date(0),
+        path: "/",
+      }),
+      serialize("refresh_token", "", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        expires: new Date(0),
+        path: "/",
+      }),
+    ]);
+
+    res.status(200).json({ message: "Logged out successfully!" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getAllAgents = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const agents = await prisma.agent.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+
+    res.status(200).json({ agents });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const getAllAgentsForReferral = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { agentId } = req.query;
+
+    if (!agentId || typeof agentId !== "string") {
+      res.status(400).json({ message: "agentId is required" });
+      return;
+    }
+
+    // Get current agent's referralIds
+    const currentAgent = await prisma.agent.findUnique({
+      where: { id: agentId },
+      select: { referralIds: true },
+    });
+
+    if (!currentAgent) {
+      res.status(404).json({ message: "Agent not found" });
+      return;
+    }
+
+    // Fetch all agents excluding those in referralIds and the current agent himself
+    const agents = await prisma.agent.findMany({
+      where: {
+        id: {
+          notIn: [agentId, ...(currentAgent.referralIds || [])],
+        },
+      },
       select: {
         id: true,
         name: true,
@@ -340,7 +407,7 @@ export const updateAgent = async (req: Request, res: Response, next: NextFunctio
       where: { id: agentId },
       data: {
         referralIds: {
-          set: Array.from(new Set([...(agent.referralIds || []), ...(referralIds || [])])),
+          set: Array.from(new Set([...(agent.referralIds || []), referralIds || []])),
         },
       },
     });
@@ -358,7 +425,7 @@ export const updateAgent = async (req: Request, res: Response, next: NextFunctio
 // Fetch a single agent and their referred agents
 export const getReferralAgents = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { agentId } = req.body;
+    const { id : agentId } = req.params;
 
     const agent = await prisma.agent.findUnique({
       where: { id: agentId },
@@ -389,3 +456,36 @@ export const getReferralAgents = async (req: Request, res: Response, next: NextF
     return next(error);
   }
 };
+
+
+// delete referral agents
+export const deleteReferralAgent = async (req: any, res: Response, next: NextFunction) => {
+    try {
+        const { id: referralId } = req.params;
+        const { agentId } = req.query;
+
+        const agent = await prisma.agent.findUnique({ where: { id: agentId } });
+        
+        if (!agent) {
+            return next(new ValidationError("Agent not found!"));
+        }
+
+        const updatedReferralIds = (agent.referralIds || []).filter((id: string) => id !== referralId);
+
+        await prisma.agent.update({
+            where: { id: agentId },
+            data: {
+                referralIds: {
+                set: updatedReferralIds,
+                },
+            },
+        });
+
+        res.status(200).json({
+            message : "Dicount code deleted succesfully!",
+        })
+        
+    } catch (error) {
+        next(error);
+    }
+}
