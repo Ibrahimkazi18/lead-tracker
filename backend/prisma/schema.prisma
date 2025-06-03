@@ -24,12 +24,13 @@ model Lead {
 }
 
 model Agent {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  email    String   @unique
-  password String?  // Made optional
-  image    String?  // Optional Google profile picture
-  leads    Lead[]
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String   @unique
+  password    String?  // Made optional
+  image       String?  // Optional Google profile picture
+  referralIds String[]
+  leads       Lead[]
 }
 
 enum Requirement {

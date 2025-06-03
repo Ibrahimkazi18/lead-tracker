@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { getUser, googleLogin, loginUser, refreshToken, resetUserPassword, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
+import { getAllAgents, getReferralAgents, getUser, googleLogin, loginUser, refreshToken, resetUserPassword, updateAgent, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
 import isAuthenticated from "../utils/middleware/isAuthenticated";
 
 const router: Router = express.Router();
@@ -16,7 +16,9 @@ router.post("/verify-forgot-password-user", verifyForgotPassword);
 router.post("/reset-password-user", resetUserPassword);
 
 // Referred Agents
-
+router.get("/get-all-agents", getAllAgents);
+router.put("/add-agent", updateAgent);
+router.get("/get-referrals", getReferralAgents);
 
 // Leads add get delete
 

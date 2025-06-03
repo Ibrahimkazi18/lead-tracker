@@ -308,3 +308,84 @@ export const resetUserPassword = async (req: Request, res: Response, next: NextF
         throw next(error);        
     }
 }
+
+export const getAllAgents = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const agents = await prisma.agent.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+
+    res.status(200).json({ agents });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+// Update Agent Info (e.g., name, image, referralIds)
+export const updateAgent = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { agentId, referralIds } = req.body;
+
+    const agent = await prisma.agent.findUnique({ where: { id: agentId } });
+
+    if (!agent) {
+      return next(new ValidationError("Agent not found!"));
+    }
+
+    const updatedAgent = await prisma.agent.update({
+      where: { id: agentId },
+      data: {
+        referralIds: {
+          set: Array.from(new Set([...(agent.referralIds || []), ...(referralIds || [])])),
+        },
+      },
+    });
+
+    res.status(200).json({
+      message: "Agent updated successfully",
+      data: updatedAgent,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+
+// Fetch a single agent and their referred agents
+export const getReferralAgents = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { agentId } = req.body;
+
+    const agent = await prisma.agent.findUnique({
+      where: { id: agentId },
+    });
+
+    if (!agent) {
+      return next(new ValidationError("Agent not found!"));
+    }
+
+    // Fetch full referral agents
+    const referrals = await prisma.agent.findMany({
+      where: {
+        id: {
+          in: agent.referralIds,
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+
+    res.status(200).json({
+        referrals
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
