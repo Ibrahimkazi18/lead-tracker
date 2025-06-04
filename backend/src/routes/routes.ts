@@ -1,6 +1,7 @@
 import express, { Router } from "express";
-import { deleteReferralAgent, getAllAgents, getAllAgentsForReferral, getReferralAgents, getUser, googleLogin, loginUser, logoutUser, refreshToken, resetUserPassword, updateAgent, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
+import { getUser, googleLogin, loginUser, logoutUser, refreshToken, resetUserPassword, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
 import isAuthenticated from "../utils/middleware/isAuthenticated";
+import { addVisit, createLead, deleteReferralAgent, getAllAgents, getAllAgentsForReferral, getConvertedLeadsByMonth, getExpiringLeads, getLeadsByWeek, getReferralAgents, getStatusDistribution, getTopAgents, updateAgent, updateLeadStatus } from "../controller/data.controller";
 
 const router: Router = express.Router();
 
@@ -22,11 +23,17 @@ router.put("/add-agent", isAuthenticated , updateAgent);
 router.get("/get-referrals/:id", isAuthenticated , getReferralAgents);
 router.delete("/delete-referral-agent/:id", isAuthenticated , deleteReferralAgent);
 
-// Leads add get delete
+// Leads and visit add get delete
+router.post("/create-lead", createLead);
+router.put("/add-visit", addVisit);
+router.put("/update-lead-status", updateLeadStatus);
 
-
-// Add visits
-
+// fetching stats
+router.get("/get-leads-by-week/:agentId", getLeadsByWeek);
+router.get("/get-converted-leads-by-month/:agentId", getConvertedLeadsByMonth);
+router.get("/get-expiring-leads/:agentId", getExpiringLeads);
+router.get("/get-status-distribution/:agentId", getStatusDistribution);
+router.get("/get-top-agents", getTopAgents);
 
 // delete account
 

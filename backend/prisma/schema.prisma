@@ -7,6 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Agent {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String   @unique
+  password    String?  // Made optional
+  image       String?  // Optional Google profile picture
+  referralIds String[]
+  leads       Lead[]
+}
+
 model Lead {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId // MongoDB ObjectId
   name          String
@@ -17,20 +27,23 @@ model Lead {
   budget        String
   howHeard      HowHeard[]
   referredBy    Agent?   @relation(fields: [agentId], references: [id])
-  agentId       String?  @db.ObjectId// Foreign key to Agent
+  agentId       String   @db.ObjectId                     // Foreign key to Agent
   projectDetail String?
   location      String?
+  status        LeadStatus @default(PENDING)
+  convertedAt   DateTime?  
+  rejectedAt    DateTime?
+  visits        Visit[] 
   createdAt     DateTime @default(now())
 }
 
-model Agent {
+model Visit {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  email       String   @unique
-  password    String?  // Made optional
-  image       String?  // Optional Google profile picture
-  referralIds String[]
-  leads       Lead[]
+  lead        Lead     @relation(fields: [leadId], references: [id])
+  leadId      String   @db.ObjectId
+  description String?
+  images      String[] // Array of image URLs
+  createdAt   DateTime @default(now())
 }
 
 enum Requirement {
@@ -48,4 +61,28 @@ enum HowHeard {
   FRIENDS
   STANDEY
   OTHER_SOURCES
+}
+
+enum LeadStatus {
+  PENDING
+  CONVERTED
+  REJECTED
+}
+
+// History / Archive Collection
+model LeadHistory {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  originalLeadId String  @db.ObjectId
+  name           String
+  residenceAdd   String
+  contactNo      String
+  email          String
+  requirement    Requirement
+  budget         String
+  howHeard       HowHeard[]
+  referredBy     String?
+  projectDetail  String?
+  location       String?
+  createdAt      DateTime
+  archivedAt     DateTime @default(now())
 }
