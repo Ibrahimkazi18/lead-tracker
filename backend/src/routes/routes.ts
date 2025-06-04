@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { getUser, googleLogin, loginUser, logoutUser, refreshToken, resetUserPassword, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
 import isAuthenticated from "../utils/middleware/isAuthenticated";
-import { addVisit, createLead, deleteReferralAgent, getAllAgents, getAllAgentsForReferral, getConvertedLeadsByMonth, getExpiringLeads, getLeadsByWeek, getReferralAgents, getStatusDistribution, getTopAgents, updateAgent, updateLeadStatus } from "../controller/data.controller";
+import { addVisit, createLead, deleteReferralAgent, getAgentLeads, getAllAgents, getAllAgentsForReferral, getConvertedLeadsByMonth, getExpiringLeads, getLeadsByWeek, getReferralAgents, getStatusDistribution, getTopAgents, updateAgent, updateLeadStatus } from "../controller/data.controller";
 
 const router: Router = express.Router();
 
@@ -24,16 +24,17 @@ router.get("/get-referrals/:id", isAuthenticated , getReferralAgents);
 router.delete("/delete-referral-agent/:id", isAuthenticated , deleteReferralAgent);
 
 // Leads and visit add get delete
-router.post("/create-lead", createLead);
-router.put("/add-visit", addVisit);
-router.put("/update-lead-status", updateLeadStatus);
+router.post("/create-lead", isAuthenticated, createLead);
+router.put("/add-visit", isAuthenticated, addVisit);
+router.put("/update-lead-status", isAuthenticated, updateLeadStatus);
+router.get("/get-agent-leads/:agentId", isAuthenticated, getAgentLeads);
 
 // fetching stats
-router.get("/get-leads-by-week/:agentId", getLeadsByWeek);
-router.get("/get-converted-leads-by-month/:agentId", getConvertedLeadsByMonth);
-router.get("/get-expiring-leads/:agentId", getExpiringLeads);
-router.get("/get-status-distribution/:agentId", getStatusDistribution);
-router.get("/get-top-agents", getTopAgents);
+router.get("/get-leads-by-week/:agentId", isAuthenticated, getLeadsByWeek);
+router.get("/get-converted-leads-by-month/:agentId", isAuthenticated, getConvertedLeadsByMonth);
+router.get("/get-expiring-leads/:agentId", isAuthenticated, getExpiringLeads);
+router.get("/get-status-distribution/:agentId", isAuthenticated, getStatusDistribution);
+router.get("/get-top-agents", isAuthenticated, getTopAgents);
 
 // delete account
 

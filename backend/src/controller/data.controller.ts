@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import prisma from "../utils/prisma";
 import { ValidationError } from "../packages";
+import { HowHeard, Requirement } from "@prisma/client";
 
 // Fetch all the agents in the database
 export const getAllAgents = async (req: Request, res: Response, next: NextFunction) => {
@@ -172,11 +173,29 @@ export const createLead = async (req: any, res: Response, next: NextFunction) =>
             howHeard,
             projectDetail,
             location,
+            referredBy
         } = req.body;
 
         if(!agentId || !contactNo || !name || !residenceAdd ||  !email || !requirement || !budget || !howHeard || !location) {
             throw next(new ValidationError("Some Fields are Missing."));
         }
+
+        let require;
+
+        if(requirement === "R_1RK") require = Requirement.R_1RK;
+        if(requirement === "R_1BHK") require = Requirement.R_1BHK;
+        if(requirement === "R_2BHK") require = Requirement.R_2BHK;
+        if(requirement === "R_3BHK") require = Requirement.R_3BHK;
+        if(requirement === "R_4BHK") require = Requirement.R_4BHK;
+        if(requirement === "SHOP") require = Requirement.SHOP;
+
+
+        let how;
+
+        if(howHeard === "HORDING") how = HowHeard.HORDING;
+        if(howHeard === "FRIENDS") how = HowHeard.FRIENDS;
+        if(howHeard === "STANDEY") how = HowHeard.STANDEY;
+        if(howHeard === "OTHER_SOURCES") how = HowHeard.OTHER_SOURCES;
 
         const lead = await prisma.lead.create({
             data: {
@@ -184,12 +203,15 @@ export const createLead = async (req: any, res: Response, next: NextFunction) =>
                 residenceAdd,
                 contactNo,
                 email,
-                requirement,
+                requirement: require!,
+                howHeard: how!,
                 budget,
-                howHeard,
                 agentId,
                 projectDetail,
                 location,
+                referredBy : {
+                    connect : {id : referredBy}
+                }
             },
         });
 
@@ -239,6 +261,54 @@ export const updateLeadStatus = async (req: Request, res: Response, next: NextFu
     next(error);
   }
 };
+
+
+// fetch agent's leads
+export const getAgentLeads = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { agentId } = req.params; 
+
+    const leads = await prisma.lead.findMany({
+      where: { agentId: agentId, status: "PENDING" },
+      include : {visits : true},
+      orderBy : { createdAt : "asc"},
+    });
+
+    // Map the Prisma leads to match the frontend LeadType
+    const formattedLeads = leads.map((lead) => {
+      return {
+        id: lead.id,
+        name: lead.name,
+        email: lead.email,
+        contactNo: lead.contactNo,
+        budget: lead.budget,
+        location: lead.location || "",
+        projectDetail: lead.projectDetail || "",
+        residenceAdd: lead.residenceAdd,
+        howHeard: lead.howHeard,
+        requirement: lead.requirement,
+        referredById: lead.referredById || "", 
+        agentId: lead.agentId,
+        status: lead.status,
+        createdAt: lead.createdAt.toISOString(),
+        convertedAt: lead.convertedAt?.toISOString(),
+        rejectedAt: lead.rejectedAt?.toISOString(),
+        visits: lead.visits.map((visit) => ({
+            id: visit.id,
+            leadId: visit.leadId,
+            images: visit.images,
+            descitption: visit.description || "",
+            createdAt: visit.createdAt.toISOString(),
+        })),
+      };
+    });
+
+    res.status(200).json({ formattedLeads });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 
 // Fetching stats for dahsboard

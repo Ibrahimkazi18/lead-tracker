@@ -25,8 +25,9 @@ model Lead {
   email         String
   requirement   Requirement
   budget        String
-  howHeard      HowHeard[]
-  referredBy    Agent?   @relation(fields: [agentId], references: [id])
+  howHeard      HowHeard
+  referredById  String?  @db.ObjectId
+  referredBy    Agent?   @relation(fields: [referredById], references: [id])
   agentId       String   @db.ObjectId                     // Foreign key to Agent
   projectDetail String?
   location      String?
@@ -79,7 +80,7 @@ model LeadHistory {
   email          String
   requirement    Requirement
   budget         String
-  howHeard       HowHeard[]
+  howHeard       HowHeard
   referredBy     String?
   projectDetail  String?
   location       String?

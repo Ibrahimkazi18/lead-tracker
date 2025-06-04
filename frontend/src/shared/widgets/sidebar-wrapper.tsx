@@ -97,7 +97,7 @@ const SideBarWrapper = () => {
 
                     <SidebarItem 
                         title="All Leads" 
-                        isActive={activeSidebar === "/dashboard/all-leads"}
+                        isActive={activeSidebar.startsWith("/dashboard/all-leads")}
                         href="/dashboard/all-leads"
                         icon={<MapPinHouse color={getIconColor("/dashboard/all-leads")}/>}
                     />
@@ -105,28 +105,12 @@ const SideBarWrapper = () => {
 
                 <SidebarMenu title="Controllers">
                     <SidebarItem 
-                        title="Inbox" 
-                        isActive={activeSidebar === "/dashboard/inbox"}
-                        href="/dashboard/inbox"
-                        icon={<Mail size={24} color={getIconColor("/dashboard/inbox")} />}
-                    />
-
-                    <SidebarItem 
                         title="Settings" 
                         isActive={activeSidebar === "/dashboard/settings"}
                         href="/dashboard/settings"
                         icon={<Settings size={24} color={getIconColor("/dashboard/settings")} />}
                     />
 
-                    <SidebarItem 
-                        title="Notifications" 
-                        isActive={activeSidebar === "/dashboard/notifications"}
-                        href="/dashboard/notifications"
-                        icon={<BellRing size={24} color={getIconColor("/dashboard/notifications")} />}
-                    />
-                </SidebarMenu>
-
-                <SidebarMenu title="Extras">
                     <SidebarItem 
                         title="Logout" 
                         onClick={handleLogout}
