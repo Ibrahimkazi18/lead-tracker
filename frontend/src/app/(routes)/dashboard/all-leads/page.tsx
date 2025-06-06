@@ -2,17 +2,19 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
-import { ChevronRight, Trash } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import Link from "next/link";
 import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form";
 import useAgent from "@/hooks/useAgent";
 import Input from "@/shared/components/input";
-import DeleteModal from "@/shared/components/delete-modal";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/utils/formatdate";
+import DeleteModal from "@/shared/components/delete-modal";
+import ConvertModal from "@/shared/components/convert-modal";
+import AddVisitModal from "@/shared/components/add-visit-modal/page";
 
-interface LeadType {
+export interface LeadType {
     id : string;
     name : string;
     email : string;
@@ -44,8 +46,10 @@ const AllLeadsPage = () => {
     }
   });
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedAgent, setSelectedAgent] = useState<any>();
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedLead, setSelectedLead] = useState<LeadType>();
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showConvertModal, setShowConvertModal] = useState(false);
+  const [showAddVisitModal, setShowAddVisitModal] = useState(false);
 
   const { agent } = useAgent();
   const router = useRouter()
@@ -60,23 +64,55 @@ const AllLeadsPage = () => {
     }
   });
 
-  const deleteDiscountCodeMutation = useMutation({
-    mutationFn : async (referralId) => {
-        await axiosInstance.delete(`/delete-referral-agent/${referralId}`, { params : { agentId : agent.id }});
+  const addVisitMutation = useMutation({
+    mutationFn : async ({ leadId, description, images }: { leadId: string; description: string; images: string[] }) => {
+        const data = { leadId, description, images}
+        await axiosInstance.put(`/add-visit`, data );
     },
 
     onSuccess : () => {
         queryClient.invalidateQueries({ queryKey : ["leads"] });
-        setShowDeleteModal(false);
+        setShowAddVisitModal(false);
+    }
+  });
+
+  const rejectLeadMutation = useMutation({
+    mutationFn : async (leadId : string) => {
+        const data = { leadId: leadId, status: "REJECTED" }
+        await axiosInstance.put(`/update-lead-status`, data );
+    },
+
+    onSuccess : () => {
+        queryClient.invalidateQueries({ queryKey : ["leads"] });
+        setShowRejectModal(false);
+    }
+  });
+
+  const convertLeadMutation = useMutation({
+    mutationFn : async ({ leadId, expectedRevenue }: { leadId: string; expectedRevenue: number }) => {
+        const data = { leadId, status: "CONVERTED", expectedRevenue };
+        await axiosInstance.put(`/update-lead-status`, data );
+    },
+
+    onSuccess : () => {
+        queryClient.invalidateQueries({ queryKey : ["leads"] });
+        setShowConvertModal(false);
     }
   });
 
   const openAddVisitModal = async (lead : LeadType) => {
-
+    setSelectedLead(lead);
+    setShowAddVisitModal(true);
   }
 
-  const updateLeadStatus = async (leadId : string, status : string) => {
+  const convertLeadStatus = async (lead : LeadType) => {
+    setSelectedLead(lead);
+    setShowConvertModal(true);
+  }
 
+  const rejectLeadStatus = async (lead : LeadType) => {
+    setSelectedLead(lead);
+    setShowRejectModal(true);
   }
 
   const sendToLeadDetail = async (leadId : string) => {
@@ -124,6 +160,7 @@ const AllLeadsPage = () => {
                             <tr className="border-b border-gray-800">
                                 <th className="p-3 text-left">Name</th>
                                 <th className="p-3 text-left">Email</th>
+                                <th className="p-3 text-left">Mobile</th>
                                 <th className="p-3 text-left">Location</th>
                                 <th className="p-3 text-left">Created</th>
                                 <th className="p-3 text-left">Actions</th>
@@ -139,13 +176,14 @@ const AllLeadsPage = () => {
                                     >
                                         <td className="p-3">{lead?.name}</td>
                                         <td className="p-3">{lead?.email}</td>
-                                        <td className="p-3">{lead?.location}</td>
+                                        <td className="p-3">{lead?.contactNo}</td>
+                                        <td className="p-3 truncate">{lead?.location}</td>
                                         <td className="p-3">{formatDate(lead?.createdAt)}</td>
                                         <td className="p-3 space-x-2 flex">
-                                          <button onClick={() => openAddVisitModal(lead)} className="bg-blue-600 cursor-pointer text-white px-2 py-1 rounded">Add Visit</button>
-                                          <button onClick={() => updateLeadStatus(lead.id, "CONVERTED")} className="bg-green-600 cursor-pointer text-white px-2 py-1 rounded">Convert</button>
-                                          <button onClick={() => updateLeadStatus(lead.id, "REJECTED")} className="bg-red-600 cursor-pointer text-white px-2 py-1 rounded">Reject</button>
                                           <button onClick={() => sendToLeadDetail(lead.id)} className="bg-yellow-600 cursor-pointer text-white px-2 py-1 rounded">Details</button>
+                                          <button onClick={() => openAddVisitModal(lead)} className="bg-blue-600 cursor-pointer text-white px-2 py-1 rounded">Add Visit</button>
+                                          <button onClick={() => convertLeadStatus(lead)} className="bg-green-600 cursor-pointer text-white px-2 py-1 rounded">Convert</button>
+                                          <button onClick={() => rejectLeadStatus(lead)} className="bg-red-600 cursor-pointer text-white px-2 py-1 rounded">Reject</button>
                                         </td>
                                     </tr>
                                 ))
@@ -160,15 +198,45 @@ const AllLeadsPage = () => {
             )}
         </div>
 
-        {/* Delete discount modal */}
-        { showDeleteModal && selectedAgent && (
-            <DeleteModal
-                title="Referral Agent"
-                description={`${agent.name} from your referrals`}
-                onClose={() => setShowDeleteModal(false)}
-                onConfirm={() => deleteDiscountCodeMutation.mutate(selectedAgent?.id)}
+        {/* Add Visit Modal */}
+        { showAddVisitModal && selectedLead && (
+            <AddVisitModal
+                title=""
+                description={`${selectedLead.name} from your lead`}
+                lead={selectedLead}
+                onClose={() => setShowAddVisitModal(false)}
+                onConfirm={(data : any) => addVisitMutation.mutate({ 
+                    leadId: selectedLead.id, 
+                    description: data.description, 
+                    images: data.images 
+                })}
             />
-        ) }
+        )}
+
+        {/* Reject lead modal */}
+        { showRejectModal && selectedLead && (
+            <DeleteModal
+                title="Lead"
+                description={`${selectedLead.name} from your lead`}
+                onClose={() => setShowRejectModal(false)}
+                onConfirm={() => rejectLeadMutation.mutate(selectedLead?.id)}
+            />
+        )}
+
+        {/* Convert lead modal */}
+        { showConvertModal && selectedLead && (
+            <ConvertModal
+                title=""
+                description={`${selectedLead.name} from your lead`}
+                onClose={() => setShowConvertModal(false)}
+                onConfirm={(expectedRevenue : number) =>
+                    convertLeadMutation.mutate({ 
+                        leadId: selectedLead.id, 
+                        expectedRevenue 
+                    })
+                }
+            />
+        )}
     </div>
   )
 }

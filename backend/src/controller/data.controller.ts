@@ -245,23 +245,64 @@ export const addVisit = async (req: Request, res: Response, next: NextFunction) 
 // Updating Status of leads
 export const updateLeadStatus = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { leadId, status } = req.body; // status = CONVERTED | REJECTED
+    const { leadId, status, expectedRevenue } = req.body; // status = CONVERTED | REJECTED
 
-    const lead = await prisma.lead.update({
+    const lead = await prisma.lead.findUnique({
       where: { id: leadId },
-      data: { 
-        status,
-        convertedAt: status === "CONVERTED" ? new Date() : undefined,
-        rejectedAt: status === "REJECTED" ? new Date() : undefined,
-    },
+      select: { agentId: true }  
     });
 
-    res.status(200).json({ lead });
+    if (!lead) {
+      res.status(404).json({ error: "Lead not found" });
+      return;
+    }
+
+    const dataToUpdate: any = {
+      status,
+      convertedAt: status === "CONVERTED" ? new Date() : undefined,
+      rejectedAt: status === "REJECTED" ? new Date() : undefined,
+    };
+
+    if (status === "CONVERTED" && typeof expectedRevenue === "number") {
+      dataToUpdate.expectedRevenue = expectedRevenue;
+
+      // Get current YYYY-MM for monthly earnings
+      const now = new Date();
+      const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`; // "2025-06"
+
+      // Fetching agent’s current earnings
+      const agent = await prisma.agent.findUnique({
+        where: { id: lead.agentId },
+        select: { totalEarnings: true, monthlyEarnings: true },
+      });
+
+      const newTotal = (agent?.totalEarnings || 0) + expectedRevenue;
+      const currentMonthlyEarnings = (agent?.monthlyEarnings ?? {}) as Record<string, number>;
+      const updatedMonthlyEarnings = {
+        ...currentMonthlyEarnings,
+        [key]: (currentMonthlyEarnings[key] || 0) + expectedRevenue,
+      };
+
+      // Update Agent with new earnings
+      await prisma.agent.update({
+        where: { id: lead.agentId },
+        data: {
+          totalEarnings: newTotal,
+          monthlyEarnings: updatedMonthlyEarnings,
+        },
+      });
+    }
+
+    const updatedLead = await prisma.lead.update({
+      where: { id: leadId },
+      data: dataToUpdate,
+    });
+
+    res.status(200).json({ lead : updatedLead });
   } catch (error) {
     next(error);
   }
 };
-
 
 // fetch agent's leads
 export const getAgentLeads = async (req: Request, res: Response, next: NextFunction) => {
@@ -309,6 +350,56 @@ export const getAgentLeads = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+// single lead
+export const getAgentLead = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { agentId, leadId } = req.params; 
+
+    const lead = await prisma.lead.findFirst({
+      where: { id: leadId, agentId: agentId, status: "PENDING" },
+      include : {visits : true, referredBy : true},
+      orderBy : { createdAt : "asc"},
+    });
+
+    if(!lead) {
+      res.status(404).json({message : "No lead found"});
+      return;
+    }
+
+    // Map the Prisma leads to match the frontend LeadType
+    const formattedLead = {
+        id: lead.id,
+        name: lead.name,
+        email: lead.email,
+        contactNo: lead.contactNo,
+        budget: lead.budget,
+        location: lead.location || "",
+        projectDetail: lead.projectDetail || "",
+        residenceAdd: lead.residenceAdd,
+        howHeard: lead.howHeard,
+        requirement: lead.requirement,
+        referredById: lead.referredById || "", 
+        agentId: lead.agentId,
+        status: lead.status,
+        createdAt: lead.createdAt.toISOString(),
+        convertedAt: lead.convertedAt?.toISOString(),
+        rejectedAt: lead.rejectedAt?.toISOString(),
+        referredBy : lead.referredBy,
+        visits: lead.visits.map((visit) => ({
+            id: visit.id,
+            leadId: visit.leadId,
+            images: visit.images,
+            descitption: visit.description || "",
+            createdAt: visit.createdAt.toISOString(),
+        })),
+    };
+
+    res.status(200).json({ formattedLead });
+
+  } catch (error) {
+    next(error);
+  }
+};
 
 
 // Fetching stats for dahsboard
@@ -340,7 +431,7 @@ export const getLeadsByWeek = async (req: Request, res: Response, next: NextFunc
         }
     });
 
-    res.status(201).json(grouped);
+    res.status(201).json({grouped});
 
   } catch (error) {
     next(error);
@@ -369,6 +460,64 @@ export const getConvertedLeadsByMonth = async (req: Request, res: Response, next
 
     res.json(Object.entries(grouped).map(([month, total]) => ({ month, total })));
 
+  } catch (error) {
+    next(error);
+  }
+};
+
+// montly revenue of agent
+export const getMonthlyRevenueByAgent = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { agentId } = req.params;
+    if (!agentId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const agent = await prisma.agent.findUnique({
+      where: { id: agentId },
+      select: { monthlyEarnings: true },
+    });
+
+    if (!agent) {
+      res.status(404).json({ message: "Agent not found" });
+      return;
+    }
+
+    const monthly = agent.monthlyEarnings as Record<string, number>;
+
+    const response = Object.entries(monthly).map(([month, total]) => ({
+      month,
+      total,
+    }));
+
+    res.status(200).json({ response });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+// total revnue
+export const getTotalRevenueByAgent = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { agentId } = req.params;
+    if (!agentId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return
+    }
+
+    const agent = await prisma.agent.findUnique({
+      where: { id: agentId },
+      select: { totalEarnings: true },
+    });
+
+    if (!agent) {
+      res.status(404).json({ message: "Agent not found" });
+      return;
+    } 
+
+    res.status(200).json({ totalRevenue: agent.totalEarnings });
   } catch (error) {
     next(error);
   }

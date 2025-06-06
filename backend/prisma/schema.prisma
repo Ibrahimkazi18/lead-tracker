@@ -8,13 +8,15 @@ datasource db {
 }
 
 model Agent {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  email       String   @unique
-  password    String?  // Made optional
-  image       String?  // Optional Google profile picture
-  referralIds String[]
-  leads       Lead[]
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String      @unique
+  password        String?  
+  image           String?  // Optional Google profile picture
+  referralIds     String[]
+  totalEarnings   Float       @default(0)            // total revenue from all converted leads
+  monthlyEarnings Json        @default("{}")  
+  leads           Lead[]
 }
 
 model Lead {
@@ -35,6 +37,7 @@ model Lead {
   convertedAt   DateTime?  
   rejectedAt    DateTime?
   visits        Visit[] 
+  expectedRevenue Float?  
   createdAt     DateTime @default(now())
 }
 

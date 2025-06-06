@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { getUser, googleLogin, loginUser, logoutUser, refreshToken, resetUserPassword, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
 import isAuthenticated from "../utils/middleware/isAuthenticated";
-import { addVisit, createLead, deleteReferralAgent, getAgentLeads, getAllAgents, getAllAgentsForReferral, getConvertedLeadsByMonth, getExpiringLeads, getLeadsByWeek, getReferralAgents, getStatusDistribution, getTopAgents, updateAgent, updateLeadStatus } from "../controller/data.controller";
+import { addVisit, createLead, deleteReferralAgent, getAgentLead, getAgentLeads, getAllAgents, getAllAgentsForReferral, getConvertedLeadsByMonth, getExpiringLeads, getLeadsByWeek, getMonthlyRevenueByAgent, getReferralAgents, getStatusDistribution, getTopAgents, getTotalRevenueByAgent, updateAgent, updateLeadStatus } from "../controller/data.controller";
 
 const router: Router = express.Router();
 
@@ -28,10 +28,13 @@ router.post("/create-lead", isAuthenticated, createLead);
 router.put("/add-visit", isAuthenticated, addVisit);
 router.put("/update-lead-status", isAuthenticated, updateLeadStatus);
 router.get("/get-agent-leads/:agentId", isAuthenticated, getAgentLeads);
+router.get("/get-agent-leads/:agentId/:leadId", isAuthenticated, getAgentLead);
 
 // fetching stats
 router.get("/get-leads-by-week/:agentId", isAuthenticated, getLeadsByWeek);
 router.get("/get-converted-leads-by-month/:agentId", isAuthenticated, getConvertedLeadsByMonth);
+router.get("/get-monthly-revenue/:agentId", isAuthenticated, getMonthlyRevenueByAgent);
+router.get("/get-total-revenue/:agentId", isAuthenticated, getTotalRevenueByAgent);
 router.get("/get-expiring-leads/:agentId", isAuthenticated, getExpiringLeads);
 router.get("/get-status-distribution/:agentId", isAuthenticated, getStatusDistribution);
 router.get("/get-top-agents", isAuthenticated, getTopAgents);
