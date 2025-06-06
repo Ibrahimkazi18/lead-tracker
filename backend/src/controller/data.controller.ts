@@ -486,10 +486,7 @@ export const getMonthlyRevenueByAgent = async (req: Request, res: Response, next
 
     const monthly = agent.monthlyEarnings as Record<string, number>;
 
-    const response = Object.entries(monthly).map(([month, total]) => ({
-      month,
-      total,
-    }));
+    const response = Object.entries(monthly).map(([month, total]) => ({month,total}));
 
     res.status(200).json({ response });
   } catch (error) {
@@ -578,7 +575,7 @@ export const getExpiringLeads = async (req: Request, res: Response, next: NextFu
             select: { id: true, name: true, createdAt: true },
         });
 
-        res.json(leads);
+        res.json({leads});
     } catch (error) {
         next(error);
     }
