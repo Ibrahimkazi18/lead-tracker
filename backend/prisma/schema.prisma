@@ -14,6 +14,7 @@ model Agent {
   password        String?  
   image           String?  // Optional Google profile picture
   referralIds     String[]
+  leadExpiryDays  Float       @default(90)
   totalEarnings   Float       @default(0)            // total revenue from all converted leads
   monthlyEarnings Json        @default("{}")  
   leads           Lead[]

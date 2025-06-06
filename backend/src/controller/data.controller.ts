@@ -20,6 +20,45 @@ export const getAllAgents = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
+export const getAgent = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { agentId } = req.params;
+
+    const agent = await prisma.agent.findUnique({
+      where: {
+        id: agentId,
+      },
+    });
+
+    res.status(200).json({ agent });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const getAgentExpiryDays = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { agentId } = req.params;
+
+    const agent = await prisma.agent.findUnique({
+      where: {
+        id: agentId,
+      },
+    });
+
+    if(!agent) {
+      res.status(404).json({ message: "Agent not found!" });
+      return
+    }
+
+    const expiryDays = agent?.leadExpiryDays;
+
+    res.status(200).json({ expiryDays });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 export const getAllAgentsForReferral = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { agentId } = req.query;
@@ -605,4 +644,31 @@ export const getStatusDistribution = async (req: Request, res: Response, next: N
     } catch (error) {
         next(error);
     }
+};
+
+
+export const updateExpiryDays = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { agentId } = req.params;
+    const { days } = req.body;
+
+    if (!agentId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return
+    }
+
+    if (!days || isNaN(days) || days <= 0 || days > 365) {
+      res.status(400).json({ message: "Invalid expiry days" });
+      return;
+    }
+
+    await prisma.agent.update({
+      where: { id: agentId },
+      data: { leadExpiryDays: days },
+    });
+
+    res.status(200).json({ message: "Lead expiry days updated successfully!" });
+  } catch (error) {
+    next(error);
+  }
 };

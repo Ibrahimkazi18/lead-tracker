@@ -310,6 +310,49 @@ export const resetUserPassword = async (req: Request, res: Response, next: NextF
     }
 }
 
+export const changeUserPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { agentId } = req.params; 
+    const { oldPassword, newPassword } = req.body;
+
+    if (!agentId || !oldPassword || !newPassword) {
+      res.status(400).json({ message: "All fields are required." });
+      return;
+    }
+
+    const user = await prisma.agent.findUnique({ where: { id: agentId } });
+
+    if (!user || !user.password) {
+      res.status(404).json({ message: "User not found." });
+      return;
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      res.status(401).json({ message: "Old password is incorrect." });
+      return;
+    }
+
+    const isSame = await bcrypt.compare(newPassword, user.password);
+    if (isSame) {
+      res.status(400).json({ message: "New password cannot be the same as the old password." });
+      return;
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+
+    await prisma.agent.update({
+      where: { id: agentId },
+      data: { password: hashed },
+    });
+
+    res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 export const logoutUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Clear both access and refresh tokens
@@ -331,6 +374,33 @@ export const logoutUser = async (req: Request, res: Response, next: NextFunction
     ]);
 
     res.status(200).json({ message: "Logged out successfully!" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+// DELETE /api/agent/delete-account
+export const deleteAgentAccount = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { agentId } = req.params;
+
+    if (!agentId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    await prisma.visit.deleteMany({ where: { lead: { agentId } } });
+    await prisma.lead.deleteMany({ where: { agentId } });
+
+    await prisma.agent.delete({
+      where: { id: agentId },
+    });
+
+    res.clearCookie("refresh_token");
+    res.clearCookie("access_token");
+
+    res.status(200).json({ message: "Your account has been deleted successfully." });
   } catch (error) {
     next(error);
   }

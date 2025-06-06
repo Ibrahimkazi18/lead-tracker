@@ -3,6 +3,7 @@
 import useAgent from "@/hooks/useAgent";
 import axiosInstance from "@/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -12,6 +13,8 @@ import {
 const DashboardPage = () => {
 
   const { agent } = useAgent();
+
+  const [expiringLeads, setExpiringLeads] = useState([]);
 
   const { data: weeklyLeads } = useQuery({
     queryKey: ["leadsByWeek"],
@@ -67,13 +70,14 @@ const DashboardPage = () => {
     }
   });
 
-  const { data: expiringLeads, isLoading: loadingExpiring } = useQuery({
-    queryKey: ["expiringLeads"],
-    queryFn: async () => {
+  useEffect(() => {
+    const fetchExpiring = async () => {
       const res = await axiosInstance.get(`/get-expiring-leads/${agent.id}`);
-      return res?.data?.leads;
-    },
-  });
+      setExpiringLeads(res.data.leads);
+    };
+
+    fetchExpiring();
+  }, []);
 
   return (
     <div className="w-full min-h-screen p-8 text-white">
@@ -176,7 +180,8 @@ const DashboardPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {expiringLeads?.map((lead : any) => {
+                { 
+                  expiringLeads?.map((lead : any) => {
                   const created = new Date(lead.createdAt);
                   const age = Math.floor((Date.now() - created.getTime()) / (1000 * 60 * 60 * 24));
                   return (
