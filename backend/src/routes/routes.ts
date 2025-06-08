@@ -2,6 +2,8 @@ import express, { Router } from "express";
 import { changeUserPassword, deleteAgentAccount, getUser, googleLogin, loginUser, logoutUser, refreshToken, resetUserPassword, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
 import isAuthenticated from "../utils/middleware/isAuthenticated";
 import { addVisit, createLead, deleteReferralAgent, getAgent, getAgentExpiryDays, getAgentLead, getAgentLeads, getAllAgents, getAllAgentsForReferral, getConvertedLeadsByMonth, getExpiringLeads, getLeadsByWeek, getMonthlyRevenueByAgent, getReferralAgents, getStatusDistribution, getTopAgents, getTotalRevenueByAgent, updateAgent, updateExpiryDays, updateLeadStatus } from "../controller/data.controller";
+import { getAdmin, loginAdmin, logoutAdmin, refreshAdminToken, registerAdmin, verifyAdmin } from "../controller/admin.controller";
+import isAdminAuthenticated from "../utils/middleware/isAdminAuthenticated";
 
 const router: Router = express.Router();
 
@@ -16,6 +18,13 @@ router.post("/forgot-password-user", userForgotPassword);
 router.post("/verify-forgot-password-user", verifyForgotPassword);
 router.post("/reset-password-user", resetUserPassword);
 router.post("/change-password-user/:agentId", changeUserPassword);
+
+// admin authentication
+router.post("/admin-registration", registerAdmin);
+router.post("/verify-admin", verifyAdmin);
+router.post("/login-admin", loginAdmin);
+router.post("/refresh-admin-token", refreshAdminToken);
+router.get("/logged-in-admin", isAdminAuthenticated, getAdmin);
 
 // Referred Agents
 router.get("/get-agent/:agentId", isAuthenticated , getAgent);
@@ -50,5 +59,6 @@ router.delete("/delete-user/:agentId", deleteAgentAccount);
 
 // logout
 router.post("/logout-user", logoutUser);
+router.post("/logout-admin", logoutAdmin);
 
 export default router;

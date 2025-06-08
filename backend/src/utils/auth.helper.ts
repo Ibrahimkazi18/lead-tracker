@@ -7,11 +7,11 @@ import { ValidationError } from "../packages";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export const validateRegistrationData = (data: any, userType: "user" | "seller") => {
-    const { name, email, password, phone_number, country } = data;
+export const validateRegistrationData = (data: any, userType: "user" | "admin") => {
+    const { name, email, password } = data;
 
     if (
-        !name || !email || !password || (userType === "seller" && (!phone_number || !country))
+        !name || !email || !password
     ) {
         throw new ValidationError("Missing Required Fields!")
     }

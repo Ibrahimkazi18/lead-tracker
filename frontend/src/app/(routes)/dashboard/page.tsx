@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  LineChart, Line, CartesianGrid, PieChart, Pie, Cell, Legend
+  LineChart, Line, PieChart, Pie, Cell, Legend
 } from "recharts";
 
 const DashboardPage = () => {

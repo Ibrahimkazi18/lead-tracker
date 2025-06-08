@@ -32,6 +32,14 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
 
     const { email, name } = payload;
 
+    const defaultPlan = await prisma.subscriptionPlan.findFirst({
+      where: { isDefault : true }, 
+    });
+
+    if (!defaultPlan) {
+      throw new Error("Default subscription plan not found.");
+    }
+
     let user = await prisma.agent.findUnique({ where: { email } });
 
     // Create user if not found
@@ -41,6 +49,14 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
           email,
           name,
           password: "", // empty password as it's Google-authenticated
+          subscriptionStart: new Date(),
+          subscriptionEnd: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
+          subscriptionStatus :"TRIAL",
+          subscriptionPlan: {
+            connect: {
+              id: defaultPlan.id,
+            },
+          },
         },
       });
     }
@@ -122,11 +138,27 @@ export const verifyUser = async (req:Request, res:Response, next:NextFunction) =
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        const defaultPlan = await prisma.subscriptionPlan.findFirst({
+          where: { isDefault : true },  
+        });
+
+        if (!defaultPlan) {
+          throw new Error("Default subscription plan not found.");
+        }
+
         await prisma.agent.create({
             data : {
                 name: name,
                 email: email,
                 password: hashedPassword,
+                subscriptionStart: new Date(),
+                subscriptionEnd: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
+                subscriptionStatus :"TRIAL",
+                subscriptionPlan: {
+                  connect: {
+                    id: defaultPlan.id,
+                  },
+                },
             }
         })
 

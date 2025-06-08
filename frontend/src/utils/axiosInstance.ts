@@ -11,8 +11,16 @@ let refreshSubscribers : (() => void)[] = [];
 
 // Handle logouts and prevent infinite loops
 const handleLogout = () => {
-    if(window.location.pathname !== '/login') {
+
+    const isAdminRoute =
+        typeof window !== "undefined" &&
+        window.location.pathname.startsWith("/admin");
+
+    if(window.location.pathname !== '/login' && !isAdminRoute) {
         window.location.href = '/login';
+    }
+    else if(window.location.pathname !== '/admin/login' && isAdminRoute) {
+        window.location.href = '/admin/login';
     }
 }
 
@@ -54,8 +62,18 @@ axiosInstance.interceptors.response.use(
             isRefreshing = true;
 
             try {
+                const isAdminRoute =
+                    typeof window !== "undefined" &&
+                    window.location.pathname.startsWith("/admin");
+
+                const refreshEndpoint = isAdminRoute
+                    ? "/refresh-admin-token"
+                    : "/refresh-token";
+
+                console.log("refresh endpoint", refreshEndpoint);
+                    
                 await axios.post(
-                    `${process.env.NEXT_PUBLIC_SEVER_URI}/refresh-token`,
+                    `${process.env.NEXT_PUBLIC_SEVER_URI}/${refreshEndpoint}`,
                     {},
                     { withCredentials : true}
                 )

@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eshop Forgot Password Email</title>
+    <title>Eshop Activation Email</title>
     <style type="text/css">
         body {
             margin: 0;
@@ -76,25 +76,20 @@
 <body>
     <div class="email-wrapper">
         <div class="email-header">
-            <h1>Password Reset Request - Lead Tracker</h1>
+            <h1>Welcome to Lead Tracker</h1>
         </div>
 
         <div class="email-body">
             <p>Hello <%= name %>, </p>
 
             <p>
-                We received a request to reset your password for your Eshop account.
-                If you made this request, please use the OTP below to reset your password: 
+                Thank you for registering with Lead Tracker. To activate your admin account, please use the following activation code:
             </p>
 
             <h2><%= otp %></h2>
 
             <p>
-                This OTP is valid for the next 5 minutes. If you did not request a password reset, please ignore this email.
-            </p>
-
-            <p>
-                If you need further assistanc eplease contact our support team. 
+                Please enter this code on the activation page within the next 5 minutes.   
             </p>
         </div>
 

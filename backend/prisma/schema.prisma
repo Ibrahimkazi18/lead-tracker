@@ -7,39 +7,63 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Admin {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  email    String   @unique
+  password String
+  name     String
+}
+
+model SubscriptionPlan {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  duration    Int      // in days (e.g. 90, 180)
+  price       Float
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isDefault   Boolean  @default(false)
+  agents      Agent[]  @relation("AgentSubscription")
+}
+
 model Agent {
-  id              String      @id @default(auto()) @map("_id") @db.ObjectId
-  name            String
-  email           String      @unique
-  password        String?  
-  image           String?  // Optional Google profile picture
-  referralIds     String[]
-  leadExpiryDays  Float       @default(90)
-  totalEarnings   Float       @default(0)            // total revenue from all converted leads
-  monthlyEarnings Json        @default("{}")  
-  leads           Lead[]
+  id                  String             @id @default(auto()) @map("_id") @db.ObjectId
+  name                String
+  email               String             @unique
+  password            String?  
+  image               String?
+  referralIds         String[]
+  leadExpiryDays      Float              @default(90)
+  totalEarnings       Float              @default(0)            // total revenue from all converted leads
+  monthlyEarnings     Json               @default("{}")  
+  subscriptionStatus  SubscriptionStatus @default(ACTIVE)
+  subscriptionStart   DateTime           @default(now())
+  subscriptionEnd     DateTime
+  subscriptionPlanId  String             @db.ObjectId
+  subscriptionPlan    SubscriptionPlan   @relation("AgentSubscription", fields: [subscriptionPlanId], references: [id])
+  leads               Lead[]
 }
 
 model Lead {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId // MongoDB ObjectId
-  name          String
-  residenceAdd  String
-  contactNo     String
-  email         String
-  requirement   Requirement
-  budget        String
-  howHeard      HowHeard
-  referredById  String?  @db.ObjectId
-  referredBy    Agent?   @relation(fields: [referredById], references: [id])
-  agentId       String   @db.ObjectId                     // Foreign key to Agent
-  projectDetail String?
-  location      String?
-  status        LeadStatus @default(PENDING)
-  convertedAt   DateTime?  
-  rejectedAt    DateTime?
-  visits        Visit[] 
-  expectedRevenue Float?  
-  createdAt     DateTime @default(now())
+  id                  String             @id @default(auto()) @map("_id") @db.ObjectId // MongoDB ObjectId
+  name                String
+  residenceAdd        String
+  contactNo           String
+  email               String
+  requirement         Requirement
+  budget              String
+  howHeard            HowHeard
+  referredById        String?            @db.ObjectId
+  referredBy          Agent?             @relation(fields: [referredById], references: [id])
+  agentId             String             @db.ObjectId                     // Foreign key to Agent
+  projectDetail       String?
+  location            String?
+  status              LeadStatus         @default(PENDING)
+  convertedAt         DateTime?  
+  rejectedAt          DateTime?
+  visits              Visit[] 
+  expectedRevenue     Float?  
+  createdAt           DateTime @default(now())
 }
 
 model Visit {
@@ -72,6 +96,13 @@ enum LeadStatus {
   PENDING
   CONVERTED
   REJECTED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  TRIAL
+  INACTIVE
 }
 
 // History / Archive Collection
