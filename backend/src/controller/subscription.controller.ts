@@ -282,46 +282,133 @@ export const getPlan = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
-export const getAdminRevenueStats = async (req: Request, res: Response, next: NextFunction) => {
+export const getAdminRevenueStats = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const confirmedSubs = await prisma.agentSubscription.findMany({
       where: { status: "confirmed" },
       include: { plan: true },
     });
 
-    const totalRevenue = confirmedSubs.reduce((acc, sub) => acc + sub.plan.price, 0);
-
-    // Map for the last 12 months with 0 values
-    const monthlyRevenueMap: Record<string, number> = {};
-    const today = new Date();
-
-    for (let i =11; i >= 0; i--) {
-      const month = format(subMonths(today, i), "yyyy-MM");
-      monthlyRevenueMap[month] = 0;
-    }
-
-    // Adding revenue to the appropriate month
-    confirmedSubs.forEach((sub) => {
-      const confirmedDate = new Date(sub.confirmedAt!);
-      const month = format(confirmedDate, "yyyy-MM");
-
-      if (month in monthlyRevenueMap) {
-        monthlyRevenueMap[month] += sub.plan.price;
-      }
-    });
-
-    // Converting to array format
-    const monthlyRevenueArray = Object.entries(monthlyRevenueMap).map(
-      ([month, revenue]) => ({
-        month,
-        revenue,
-      })
+    const totalRevenue = confirmedSubs.reduce(
+      (acc, sub) => acc + sub.plan.price,
+      0
     );
 
     res.status(200).json({
       totalRevenue,
-      monthlyRevenue: monthlyRevenueArray,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAdminMonthlyRevenueStats = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const confirmedSubs = await prisma.agentSubscription.findMany({
+      where: { status: "confirmed" },
+      include: { plan: true },
+    });
+
+    // Set up the last 12 months with 0 revenue
+    const today = new Date();
+    const monthlyRevenueMap: Record<string, number> = {};
+    const monthlyChartData: Array<{ month: string; revenue: number }> = [];
+
+    for (let i = 11; i >= 0; i--) {
+      const monthKey = format(subMonths(today, i), "yyyy-MM");
+      monthlyRevenueMap[monthKey] = 0;
+    }
+
+    confirmedSubs.forEach((sub) => {
+      const confirmedDate = new Date(sub.confirmedAt!);
+      const monthKey = format(confirmedDate, "yyyy-MM");
+
+      if (monthKey in monthlyRevenueMap) {
+        monthlyRevenueMap[monthKey] += sub.plan.price;
+      }
+    });
+
+    for (const [month, revenue] of Object.entries(monthlyRevenueMap)) {
+      monthlyChartData.push({ month, revenue });
+    }
+
+    res.status(200).json({
+      monthlyRevenue: monthlyChartData, 
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const getPlanWiseRevenueStats = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const confirmedSubs = await prisma.agentSubscription.findMany({
+      where: { status: "confirmed" },
+      include: { plan: true },
+    });
+
+    const today = new Date();
+    const monthlyKeys = Array.from({ length: 12 }).map((_, i) =>
+      format(subMonths(today, 11 - i), "yyyy-MM")
+    );
+
+    // Map structure: { [planId]: { name, totalRevenue, monthlyRevenue: { [month]: amount } } }
+    const planRevenueMap: Record<
+      string,
+      {
+        name: string;
+        totalRevenue: number;
+        monthlyRevenue: Record<string, number>;
+      }
+    > = {};
+
+    confirmedSubs.forEach((sub) => {
+      const planId = sub.plan.id;
+      const planName = sub.plan.name;
+      const price = sub.plan.price;
+      const confirmedDate = new Date(sub.confirmedAt!);
+      const monthKey = format(confirmedDate, "yyyy-MM");
+
+      if (!planRevenueMap[planId]) {
+        planRevenueMap[planId] = {
+          name: planName,
+          totalRevenue: 0,
+          monthlyRevenue: {},
+        };
+
+        // Initialize all months with 0
+        monthlyKeys.forEach((month) => {
+          planRevenueMap[planId].monthlyRevenue[month] = 0;
+        });
+      }
+
+      planRevenueMap[planId].totalRevenue += price;
+      if (monthKey in planRevenueMap[planId].monthlyRevenue) {
+        planRevenueMap[planId].monthlyRevenue[monthKey] += price;
+      }
+    });
+
+    // Format response
+    const result = Object.entries(planRevenueMap).map(([planId, data]) => ({
+      planId,
+      name: data.name,
+      totalRevenue: data.totalRevenue,
+      monthlyRevenue: Object.entries(data.monthlyRevenue).map(([month, revenue]) => ({
+        month,
+        revenue,
+      })),
+    }));
+
+    res.status(200).json({ plans: result });
   } catch (error) {
     next(error);
   }
