@@ -24,6 +24,21 @@ model SubscriptionPlan {
   updatedAt   DateTime @updatedAt
   isDefault   Boolean  @default(false)
   agents      Agent[]  @relation("AgentSubscription")
+  agentSubscriptions AgentSubscription[]
+}
+
+model AgentSubscription {
+  id           String           @id @default(auto()) @map("_id") @db.ObjectId
+  agentId      String           @db.ObjectId
+  planId       String           @db.ObjectId
+  status       String           // pending | confirmed | rejected
+  requestedAt  DateTime         @default(now())
+  confirmedAt  DateTime?
+  expiresAt    DateTime?
+  paymentRef   String?          // UPI reference or txn id
+  isActive     Boolean          @default(false)
+  agent        Agent            @relation(fields: [agentId], references: [id])
+  plan         SubscriptionPlan @relation(fields: [planId], references: [id])
 }
 
 model Agent {
@@ -41,6 +56,7 @@ model Agent {
   subscriptionEnd     DateTime
   subscriptionPlanId  String             @db.ObjectId
   subscriptionPlan    SubscriptionPlan   @relation("AgentSubscription", fields: [subscriptionPlanId], references: [id])
+  agentSubscriptions  AgentSubscription[]
   leads               Lead[]
 }
 

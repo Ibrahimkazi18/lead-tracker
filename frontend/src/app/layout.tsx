@@ -2,6 +2,7 @@ import './globals.css';
 import { Roboto, Poppins } from "next/font/google"
 import Providers from './providers';
 import Script from "next/script";
+import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
   title: 'Lead Tracker',
@@ -37,6 +38,7 @@ export default function RootLayout({
       </head>
       <body className={`${roboto.variable} ${poppins.variable}`}>
         <Providers>
+        <Toaster />
         {children}
         </Providers>
       </body>
