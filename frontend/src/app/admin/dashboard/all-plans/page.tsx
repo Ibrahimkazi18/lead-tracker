@@ -89,9 +89,6 @@ const AllPlansPage = () => {
   const [showDeletePlanModal, setShowDeletePlanModal] = useState(false);
   const [showUpdatePlanModal, setShowUpdatePlanModal] = useState(false);
 
-  const { admin } = useAdmin();
-  const router = useRouter()
-
   const queryClient = useQueryClient();
 
   const { data : allPlans = [], isLoading} = useQuery({
@@ -184,9 +181,9 @@ const AllPlansPage = () => {
 
         {/* Bread Crumbs */}
         <div className="flex items-center">
-            <Link href={"/dashboard"} className="text-[#80Deea] cursor-pointer">Dashboard</Link>
-            <ChevronRight size={20} className="opacity-[.8]"/>
-            <span className="">Available Plans</span>
+          <Link href={"/dashboard"} className="text-[#80Deea] cursor-pointer">Dashboard</Link>
+          <ChevronRight size={20} className="opacity-[.8]"/>
+          <span className="">Available Plans</span>
         </div>
 
         {/* existing codes */}

@@ -14,7 +14,21 @@ export const usePlanStatus = () => {
     enabled: !!agent?.id,
   });
 
-  const isPlanActive = activePlan ? true : false
+  const isPlanActive = activePlan ? true : false;
 
-  return { isPlanActive, activePlan };
+  const daysLeft = activePlan?.expiresAt
+    ? Math.ceil((new Date(activePlan.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    : null;
+
+  const willExpireSoon = typeof daysLeft === "number" && daysLeft <= 5 && daysLeft > 0;
+
+  const isExpired = typeof daysLeft === "number" && daysLeft <= 0;
+
+  return {
+    isPlanActive,
+    activePlan,
+    daysLeft,
+    willExpireSoon,
+    isExpired,
+  };
 };

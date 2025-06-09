@@ -162,7 +162,7 @@ export const getPendingRequests = async (req: Request, res: Response, next: Next
       },
     });
 
-    res.status(200).json(requests);
+    res.status(200).json({requests});
   } catch (error) {
     next(error);
   }

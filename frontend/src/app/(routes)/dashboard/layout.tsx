@@ -1,8 +1,13 @@
+"use client"
+
+import useCheckActivePlan from "@/hooks/useCheckActivePlan"
 import SubscriptionExpiryWarning from "@/shared/components/expiryPopup"
 import SideBarWrapper from "@/shared/widgets/sidebar-wrapper"
 import React from "react"
 
 const Layout = ({ children } : { children : React.ReactNode }) => {
+  useCheckActivePlan();
+
   return (
     <div className="flex h-full bg-black min-h-screen">
         {/* Sidebar */}
