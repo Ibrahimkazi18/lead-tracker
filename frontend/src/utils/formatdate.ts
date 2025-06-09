@@ -6,3 +6,11 @@ export function formatDate(dateString: string): string {
     year: "numeric",
   });
 }
+
+// utils/dateUtils.ts
+export const getDaysLeft = (expiry: string | Date) => {
+  const now = new Date();
+  const exp = new Date(expiry);
+  const diff = Math.max(0, Math.ceil((exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+  return diff;
+};

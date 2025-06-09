@@ -59,6 +59,17 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
           },
         },
       });
+
+      await prisma.agentSubscription.create({
+        data: {
+          agentId: user.id,
+          planId: defaultPlan.id,
+          status: "confirmed",
+          isActive: true,
+          confirmedAt: new Date(),
+          expiresAt: new Date(Date.now() + defaultPlan.duration * 86400000),
+        },
+      });
     }
     
     // Generate tokens

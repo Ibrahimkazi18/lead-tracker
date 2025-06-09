@@ -224,15 +224,35 @@ export const getActiveAgentPlan = async (req: Request, res: Response, next: Next
         isActive: true,
         expiresAt: { gte: new Date() },
       },
-      include: { plan: true },
     });
-
+    
     if (!active) {
       res.status(200).json({ message: "No active subscription found." });
       return;
     }
 
-    res.status(200).json(active);
+    res.status(200).json({active});
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPlan = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { planId } = req.params;
+
+    const plan = await prisma.subscriptionPlan.findFirst({
+      where: {
+        id: planId
+      },
+    });
+    
+    if (!plan) {
+      res.status(200).json({ message: "No plan subscription found." });
+      return;
+    }
+
+    res.status(200).json({plan});
   } catch (error) {
     next(error);
   }

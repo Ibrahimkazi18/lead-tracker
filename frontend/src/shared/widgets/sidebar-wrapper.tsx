@@ -9,7 +9,7 @@ import Link from "next/link";
 import SidebarItem from "./sidebar-item";
 import SidebarMenu from "./sidebar-menu";
 import Home from "@/assets/icons/home";
-import { BellRing, LogOut, Mail, MapPinHouse, Settings, SquarePlus, UserRoundPlus, UsersRound } from "lucide-react";
+import { BadgeIndianRupee, BellRing, LogOut, Mail, MapPinHouse, Settings, ShoppingCart, SquarePlus, UserRoundPlus, UsersRound } from "lucide-react";
 import useAgent from "@/hooks/useAgent";
 import toast from "react-hot-toast";
 
@@ -103,7 +103,24 @@ const SideBarWrapper = () => {
                     />
                 </SidebarMenu>
 
+                <SidebarMenu title="Plans">
+                    <SidebarItem 
+                        title="Buy Plan" 
+                        isActive={activeSidebar === "/dashboard/buy-plan"}
+                        href="/dashboard/buy-plan"
+                        icon={<ShoppingCart size={24} color={getIconColor("/dashboard/buy-plan")} />}
+                    />
+
+                    <SidebarItem 
+                        title="Your Plan" 
+                        isActive={activeSidebar === "/dashboard/your-plan"}
+                        href="/dashboard/your-plan"
+                        icon={<BadgeIndianRupee size={24} color={getIconColor("/dashboard/your-plan")} />}
+                    />
+                </SidebarMenu>
+
                 <SidebarMenu title="Controllers">
+
                     <SidebarItem 
                         title="Settings" 
                         isActive={activeSidebar === "/dashboard/settings"}

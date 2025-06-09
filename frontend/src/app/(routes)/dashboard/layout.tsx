@@ -1,3 +1,4 @@
+import SubscriptionExpiryWarning from "@/shared/components/expiryPopup"
 import SideBarWrapper from "@/shared/widgets/sidebar-wrapper"
 import React from "react"
 
@@ -14,6 +15,7 @@ const Layout = ({ children } : { children : React.ReactNode }) => {
         {/* Main content area */}
         <main className="flex-1">
             <div className="overflow-auto">
+                <SubscriptionExpiryWarning />
                 {children}
             </div>
         </main>
