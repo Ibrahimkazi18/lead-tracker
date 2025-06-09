@@ -128,7 +128,7 @@ const ConfirmPaymentsPage = () => {
                                       <td className="p-3">{request?.plan?.name}</td>
                                       <td className="p-3">₹{request?.plan?.price}</td>
                                       <td className="p-3 truncate capitalize">{request?.status}</td>
-                                      <td className="p-3">{formatDate(request?.createdAt)}</td>
+                                      <td className="p-3">{formatDate(request?.requestedAt)}</td>
                                       <td className="p-3 space-x-2 flex">
                                         <PlanActions 
                                           onConfirm={() => openConfirmModal(request)} 

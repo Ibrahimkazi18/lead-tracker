@@ -209,3 +209,45 @@ export const logoutAdmin = async (req: Request, res: Response, next: NextFunctio
     next(error);
   }
 };
+
+export const changeAdminPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { adminId } = req.params; 
+    const { oldPassword, newPassword } = req.body;
+
+    if (!adminId || !oldPassword || !newPassword) {
+      res.status(400).json({ message: "All fields are required." });
+      return;
+    }
+
+    const admin = await prisma.admin.findUnique({ where: { id: adminId } });
+
+    if (!admin || !admin.password) {
+      res.status(404).json({ message: "Admin not found." });
+      return;
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, admin.password);
+    if (!isMatch) {
+      res.status(401).json({ message: "Old password is incorrect." });
+      return;
+    }
+
+    const isSame = await bcrypt.compare(newPassword, admin.password);
+    if (isSame) {
+      res.status(400).json({ message: "New password cannot be the same as the old password." });
+      return;
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+
+    await prisma.admin.update({
+      where: { id: adminId },
+      data: { password: hashed },
+    });
+
+    res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+    next(error);
+  }
+};

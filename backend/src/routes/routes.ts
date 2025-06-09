@@ -2,9 +2,9 @@ import express, { Router } from "express";
 import { changeUserPassword, deleteAgentAccount, getUser, googleLogin, loginUser, logoutUser, refreshToken, resetUserPassword, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
 import isAuthenticated from "../utils/middleware/isAuthenticated";
 import { addVisit, createLead, deleteReferralAgent, getAgent, getAgentExpiryDays, getAgentLead, getAgentLeads, getAllAgents, getAllAgentsForReferral, getConvertedLeadsByMonth, getExpiringLeads, getLeadsByWeek, getMonthlyRevenueByAgent, getReferralAgents, getStatusDistribution, getTopAgents, getTotalRevenueByAgent, updateAgent, updateExpiryDays, updateLeadStatus } from "../controller/data.controller";
-import { getAdmin, loginAdmin, logoutAdmin, refreshAdminToken, registerAdmin, verifyAdmin } from "../controller/admin.controller";
+import { changeAdminPassword, getAdmin, loginAdmin, logoutAdmin, refreshAdminToken, registerAdmin, verifyAdmin } from "../controller/admin.controller";
 import isAdminAuthenticated from "../utils/middleware/isAdminAuthenticated";
-import { confirmSubscription, createPlan, deletePlan, getActiveAgentPlan, getAdminRevenueStats, getAllPlans, getPendingRequests, getPlan, rejectSubscription, requestSubscription, setDefaultPlan, updatePlan } from "../controller/subscription.controller";
+import { confirmSubscription, createPlan, deletePlan, getActiveAgentPlan, getAdminRevenueStats, getAllActivePlans, getAllPlans, getPendingRequests, getPlan, rejectSubscription, requestSubscription, setDefaultPlan, updatePlan } from "../controller/subscription.controller";
 
 const router: Router = express.Router();
 
@@ -26,6 +26,7 @@ router.post("/verify-admin", verifyAdmin);
 router.post("/login-admin", loginAdmin);
 router.post("/refresh-admin-token", refreshAdminToken);
 router.get("/logged-in-admin", isAdminAuthenticated, getAdmin);
+router.post("/change-password-admin/:adminId", changeAdminPassword);
 
 // Referred Agents
 router.get("/get-agent/:agentId", isAuthenticated , getAgent);
@@ -58,19 +59,14 @@ router.get("/get-all-plans", isAdminAuthenticated, getAllPlans);
 router.put("/update-plan/:id", isAdminAuthenticated, updatePlan);
 router.delete("/delete-plan/:id", isAdminAuthenticated, deletePlan);
 router.patch("/set-default/:planId", isAdminAuthenticated, setDefaultPlan);
-
-router.post("/request-subscription/:agentId", requestSubscription);
-router.get("/get-pending-requests", getPendingRequests);
-router.put("/confirm-subscription/:id", confirmSubscription);
-router.put("/reject-subscription/:id", rejectSubscription);
-router.get("/get-admin-revenue-stats", getAdminRevenueStats);
-// router.post("/request-subscription/:agentId", isAuthenticated, requestSubscription);
-// router.get("/get-pending-requests", isAdminAuthenticated, getPendingRequests);
-// router.put("/confirm-subscription/:id", isAdminAuthenticated, confirmSubscription);
-// router.put("/reject-subscription/:id", isAdminAuthenticated, rejectSubscription);
+router.post("/request-subscription/:agentId", isAuthenticated, requestSubscription);
+router.get("/get-pending-requests", isAdminAuthenticated, getPendingRequests);
+router.put("/confirm-subscription/:id", isAdminAuthenticated, confirmSubscription);
+router.put("/reject-subscription/:id", isAdminAuthenticated, rejectSubscription);
+router.get("/get-all-active-plans", isAdminAuthenticated, getAllActivePlans);
 router.get("/get-active-agent-plan/:agentId", isAuthenticated, getActiveAgentPlan);
 router.get("/get-plan/:planId", isAuthenticated, getPlan);
-// router.get("/get-admin-revenue-stats", isAdminAuthenticated, getAdminRevenueStats);
+router.get("/get-admin-revenue-stats", isAdminAuthenticated, getAdminRevenueStats);
 
 // update expiry days
 router.post("/update-expiry-days/:agentId", isAuthenticated, updateExpiryDays);

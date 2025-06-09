@@ -237,6 +237,30 @@ export const getActiveAgentPlan = async (req: Request, res: Response, next: Next
   }
 };
 
+export const getAllActivePlans = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const active = await prisma.agentSubscription.findMany({
+      where: {
+        isActive: true,
+        expiresAt: { gte: new Date() },
+      },
+      include : {
+        agent : true,
+        plan : true
+      }
+    });
+    
+    if (!active) {
+      res.status(200).json({ message: "No active subscription found." });
+      return;
+    }
+
+    res.status(200).json({active});
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getPlan = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { planId } = req.params;
