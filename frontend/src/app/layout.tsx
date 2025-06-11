@@ -3,6 +3,7 @@ import { Roboto, Poppins } from "next/font/google"
 import Providers from './providers';
 import Script from "next/script";
 import { Toaster } from 'react-hot-toast';
+import { ThemeProvider } from 'next-themes';
 
 export const metadata = {
   title: 'Lead Tracker',
@@ -28,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning className={`${roboto.variable} ${poppins.variable} transition-colors duration-500`}>
       <head>
         {/* Google Identity Services script */}
         <Script
@@ -36,11 +37,13 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body className={`${roboto.variable} ${poppins.variable}`}>
-        <Providers>
-        <Toaster />
-        {children}
-        </Providers>
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Providers>
+          <Toaster />
+            {children}
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   )

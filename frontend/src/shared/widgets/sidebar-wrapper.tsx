@@ -52,10 +52,10 @@ const SideBarWrapper = () => {
    >
     <Sidebar.Header>
         <Box>
-            <Link href={'/'} className="flex justify-center text-center gap-2">
-                Logo
+            <Link href={'/'} className="flex flex-col justify-start text-start gap-2">
+                <span className="text-2xl font-semibold text-[#ecedee]">Lead Tracker</span>
                 <Box>
-                    <h3 className="text-xl font-medium text-[#ecedee]">{agent?.name}</h3>
+                    <h3 className="text-md font-medium text-[#ecedee]">Hello, {agent?.name.split(" ")[0]}</h3>
                 </Box>
             </Link>
         </Box>

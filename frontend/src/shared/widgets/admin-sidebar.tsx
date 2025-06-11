@@ -9,7 +9,7 @@ import Link from "next/link";
 import SidebarItem from "./sidebar-item";
 import SidebarMenu from "./sidebar-menu";
 import Home from "@/assets/icons/home";
-import { LogOut, MapPinHouse, Settings, SquarePlus, UserRoundPlus, UsersRound } from "lucide-react";
+import { BadgeCheck, ClipboardList, FilePlus, FolderKanban, LogOut, Settings } from "lucide-react";
 import toast from "react-hot-toast";
 import useAdmin from "@/hooks/useAdmin";
 
@@ -75,14 +75,14 @@ const SideBarWrapper = () => {
                         title="Confirm Payments" 
                         isActive={activeSidebar === "/admin/dashboard/confirm-payments"}
                         href="/admin/dashboard/confirm-payments"
-                        icon={<UserRoundPlus size={26} color={getIconColor("/admin/dashboard/confirm-payments")}/>}
+                        icon={<BadgeCheck size={26} color={getIconColor("/admin/dashboard/confirm-payments")}/>}
                     />
 
                     <SidebarItem 
                         title="Active Plans" 
                         isActive={activeSidebar === "/admin/dashboard/active-plans"}
                         href="/admin/dashboard/active-plans"
-                        icon={<UsersRound size={26} color={getIconColor("/admin/dashboard/active-plans")}/>}
+                        icon={<ClipboardList size={26} color={getIconColor("/admin/dashboard/active-plans")}/>}
                     />
                 </SidebarMenu>
 
@@ -91,14 +91,14 @@ const SideBarWrapper = () => {
                         title="Create Plan" 
                         isActive={activeSidebar === "/admin/dashboard/create-plan"}
                         href="/admin/dashboard/create-plan"
-                        icon={<SquarePlus size={24} color={getIconColor("/admin/dashboard/create-plan")} />}
+                        icon={<FilePlus size={24} color={getIconColor("/admin/dashboard/create-plan")} />}
                     />
 
                     <SidebarItem 
                         title="All Plans" 
                         isActive={activeSidebar.startsWith("/admin/dashboard/all-plans")}
                         href="/admin/dashboard/all-plans"
-                        icon={<MapPinHouse color={getIconColor("/admin/dashboard/all-plans")}/>}
+                        icon={<FolderKanban color={getIconColor("/admin/dashboard/all-plans")}/>}
                     />
                 </SidebarMenu>
 
