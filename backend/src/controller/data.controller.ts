@@ -236,25 +236,48 @@ export const createLead = async (req: any, res: Response, next: NextFunction) =>
         if(howHeard === "STANDEY") how = HowHeard.STANDEY;
         if(howHeard === "OTHER_SOURCES") how = HowHeard.OTHER_SOURCES;
 
-        const lead = await prisma.lead.create({
-            data: {
-                name,
-                residenceAdd,
-                contactNo,
-                email,
-                requirement: require!,
-                howHeard: how!,
-                budget,
-                agentId,
-                projectDetail,
-                location,
-                referredBy : {
+        if (referredBy) {
+          const lead = await prisma.lead.create({
+              data: {
+                  name,
+                  residenceAdd,
+                  contactNo,
+                  email,
+                  requirement: require!,
+                  howHeard: how!,
+                  budget,
+                  agentId,
+                  projectDetail,
+                  location,
+                  referredBy : {
                     connect : {id : referredBy}
                 }
-            },
-        });
+              },
+          });
 
-        res.status(201).json({ lead });
+          res.status(201).json({ lead });
+          return;
+        }
+
+        if (!referredBy) {
+          const lead = await prisma.lead.create({
+              data: {
+                  name,
+                  residenceAdd,
+                  contactNo,
+                  email,
+                  requirement: require!,
+                  howHeard: how!,
+                  budget,
+                  agentId,
+                  projectDetail,
+                  location,
+              },
+          });
+
+          res.status(201).json({ lead });
+          return;
+        }
 
     } catch (error) {
         next(error);
@@ -350,8 +373,14 @@ export const getAgentLeads = async (req: Request, res: Response, next: NextFunct
 
     const leads = await prisma.lead.findMany({
       where: { agentId: agentId, status: "PENDING" },
-      include : {visits : true},
-      orderBy : { createdAt : "asc"},
+      include: {
+        visits: {
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+      },
+      orderBy : { createdAt : "desc"},
     });
 
     // Map the Prisma leads to match the frontend LeadType
@@ -396,7 +425,14 @@ export const getAgentLead = async (req: Request, res: Response, next: NextFuncti
 
     const lead = await prisma.lead.findFirst({
       where: { id: leadId, agentId: agentId, status: "PENDING" },
-      include : {visits : true, referredBy : true},
+      include : {
+        visits : {
+          orderBy : {
+            createdAt : "desc"
+          }
+        }, 
+        referredBy : true
+      },
       orderBy : { createdAt : "asc"},
     });
 

@@ -56,6 +56,7 @@ router.get("/get-top-agents", isAuthenticated, getTopAgents);
 // subcription
 router.post("/create-plan", isAdminAuthenticated, createPlan);
 router.get("/get-all-plans", isAdminAuthenticated, getAllPlans);
+router.get("/get-all-plans-agent", isAuthenticated, getAllPlans);
 router.put("/update-plan/:id", isAdminAuthenticated, updatePlan);
 router.delete("/delete-plan/:id", isAdminAuthenticated, deletePlan);
 router.patch("/set-default/:planId", isAdminAuthenticated, setDefaultPlan);

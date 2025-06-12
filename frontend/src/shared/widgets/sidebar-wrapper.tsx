@@ -9,7 +9,7 @@ import Link from "next/link";
 import SidebarItem from "./sidebar-item";
 import SidebarMenu from "./sidebar-menu";
 import Home from "@/assets/icons/home";
-import { BadgeIndianRupee, BellRing, LogOut, Mail, MapPinHouse, Settings, ShoppingCart, SquarePlus, UserRoundPlus, UsersRound } from "lucide-react";
+import { BadgeIndianRupee, LogOut, MapPinHouse, Settings, ShoppingCart, SquarePlus, UserRoundPlus, UsersRound } from "lucide-react";
 import useAgent from "@/hooks/useAgent";
 import toast from "react-hot-toast";
 

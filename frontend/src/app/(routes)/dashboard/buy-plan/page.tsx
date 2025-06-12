@@ -30,7 +30,7 @@ const SubscriptionPlansPage = () => {
   const { data : plans } = useQuery({
     queryKey : ["plans"],
     queryFn : async () => {
-      const response = await axiosInstance.get(`/get-all-plans`);
+      const response = await axiosInstance.get(`/get-all-plans-agent`);
       return response?.data?.plans;
     }
   });

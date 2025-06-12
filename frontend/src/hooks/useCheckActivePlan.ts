@@ -27,12 +27,8 @@ const useCheckActivePlan = () => {
     if (!isFetched) return;
 
     const protectedRoutes = [
-      "/dashboard",
       "/dashboard/add-agents",
-      "/dashboard/all-agents",
       "/dashboard/create-lead",
-      "/dashboard/all-leads",
-      "/dashboard/settings",
     ];
 
     const isProtected = protectedRoutes.some((r) => pathname.startsWith(r));
