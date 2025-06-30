@@ -158,7 +158,7 @@ const ForgotPassword = () => {
                 { step === "email" && (
                     <>
                         <h3 className="text-3xl font-semibold text-center mb-2">
-                            Login to Lead Tracker
+                            Login to Open Leads
                         </h3>
 
                         <p className="text-center text-gray-500 mb-4">

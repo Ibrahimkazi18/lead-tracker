@@ -53,9 +53,9 @@ const DashboardPage = () => {
 
     const months = plans[0]?.monthlyRevenue.map((m: any) => m.month);
 
-    return months.map((month:any) => {
+    return months?.map((month:any) => {
       const entry: any = { month };
-      plans.forEach((plan: any) => {
+      plans?.forEach((plan: any) => {
         const revenue = plan.monthlyRevenue.find((m: any) => m.month === month)?.revenue || 0;
         entry[plan.name] = revenue;
       });
@@ -117,7 +117,7 @@ const DashboardPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {plans.map((plan: any) => (
+                      {plans?.map((plan: any) => (
                         <tr key={plan.planId} className="border-t border-gray-700">
                           <td className="p-3">{plan.name}</td>
                           <td className="p-3">₹{plan.totalRevenue}</td>
@@ -130,7 +130,7 @@ const DashboardPage = () => {
             </>
           )
           : (
-            <p>Loadin stats ... </p>
+            <p>Loading stats ... </p>
           )
       }
     </div>

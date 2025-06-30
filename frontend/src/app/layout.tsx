@@ -6,7 +6,7 @@ import { Toaster } from 'react-hot-toast';
 import { ThemeProvider } from 'next-themes';
 
 export const metadata = {
-  title: 'Lead Tracker',
+  title: 'Open Leads',
   description: 'An application to track real-estate leads for agents.',
 }
 

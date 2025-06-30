@@ -12,7 +12,7 @@ const useCheckActivePlan = () => {
   const pathname = usePathname();
   const { agent } = useAgent();
 
-  const { data: activePlan, isFetched } = useQuery({
+  const { data: activePlan = {}, isFetched } = useQuery({
     queryKey: ["active-plan"],
     queryFn: async () => {
       if (!agent?.id) return null;

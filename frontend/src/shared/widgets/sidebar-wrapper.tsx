@@ -53,7 +53,7 @@ const SideBarWrapper = () => {
     <Sidebar.Header>
         <Box>
             <Link href={'/'} className="flex flex-col justify-start text-start gap-2">
-                <span className="text-2xl font-semibold text-[#ecedee]">Lead Tracker</span>
+                <span className="text-2xl font-semibold text-[#ecedee]">Open Leads</span>
                 <Box>
                     <h3 className="text-md font-medium text-[#ecedee]">Hello, {agent?.name.split(" ")[0]}</h3>
                 </Box>

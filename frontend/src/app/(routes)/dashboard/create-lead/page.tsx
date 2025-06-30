@@ -45,6 +45,7 @@ const AddLeadPage = () => {
     },
 
     onSuccess : () => {
+      toast.success("Lead created successfully!");
       setLoading(false);
       reset();
     },

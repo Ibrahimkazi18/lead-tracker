@@ -13,7 +13,7 @@ const YourPlanPage = () => {
 
   const [daysLeft, setdaysLeft] = useState(0);
 
-  const { data : activePlan } = useQuery({
+  const { data : activePlan = {} } = useQuery({
     queryKey : ["active-plan"],
     queryFn : async () => {
         const response = await axiosInstance.get(`/get-active-agent-plan/${agent.id}`);

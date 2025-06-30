@@ -13,6 +13,7 @@ import { formatDate } from "@/utils/formatdate";
 import DeleteModal from "@/shared/components/delete-modal";
 import ConvertModal from "@/shared/components/convert-modal";
 import AddVisitModal from "@/shared/components/add-visit-modal/page";
+import toast from "react-hot-toast";
 
 export interface LeadType {
     id : string;
@@ -71,8 +72,13 @@ const AllLeadsPage = () => {
     },
 
     onSuccess : () => {
+        toast.success("Visit added successfully!");
         queryClient.invalidateQueries({ queryKey : ["leads"] });
         setShowAddVisitModal(false);
+    },
+
+    onError : (error: any) => {
+        toast.error(error?.response?.data?.message || "Failed to add visit");
     }
   });
 

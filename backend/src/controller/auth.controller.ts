@@ -157,13 +157,13 @@ export const verifyUser = async (req:Request, res:Response, next:NextFunction) =
           throw new Error("Default subscription plan not found.");
         }
 
-        await prisma.agent.create({
+        const user = await prisma.agent.create({
             data : {
                 name: name,
                 email: email,
                 password: hashedPassword,
                 subscriptionStart: new Date(),
-                subscriptionEnd: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
+                subscriptionEnd: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
                 subscriptionStatus :"TRIAL",
                 subscriptionPlan: {
                   connect: {
@@ -172,6 +172,17 @@ export const verifyUser = async (req:Request, res:Response, next:NextFunction) =
                 },
             }
         })
+
+        await prisma.agentSubscription.create({
+          data: {
+            agentId: user.id,
+            planId: defaultPlan.id,
+            status: "confirmed",
+            isActive: true,
+            confirmedAt: new Date(),
+            expiresAt: new Date(Date.now() + defaultPlan.duration * 86400000),
+          },
+        });
 
         res.status(200).json({
             success: true,
