@@ -53,7 +53,7 @@ const YourPlanPage = () => {
           <h3 className="text-2xl font-bold text-white">{planDetails?.name}</h3>
           <span className={`text-sm px-3 py-1 rounded-full font-medium 
             ${activePlan?.status === "confirmed" ? "bg-green-600 text-white" : "bg-yellow-500 text-black"}`}>
-            {activePlan?.status.toUpperCase()}
+            {activePlan?.status ? activePlan?.status.toUpperCase() : "BASIC"}
           </span>
         </div>
 
