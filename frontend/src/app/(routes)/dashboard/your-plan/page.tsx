@@ -8,6 +8,8 @@ import { BadgeCheck, CalendarDays, ChevronRight, Clock, DollarSign, TimerReset }
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+export const dynamic = "force-dynamic";
+
 const YourPlanPage = () => {
   const { agent } = useAgent();
 
