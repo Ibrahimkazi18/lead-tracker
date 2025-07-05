@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middlewares
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000", "https://openleads.vercel.app", "https://openleads.in"],
   credentials: true
 }));
 app.use(express.json());
