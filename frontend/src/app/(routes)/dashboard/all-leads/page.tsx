@@ -41,11 +41,6 @@ export interface LeadType {
 }
 
 const AllLeadsPage = () => {
-  const { register, control, reset, handleSubmit, formState : { errors }} = useForm({
-    defaultValues : {
-        referralIds : [],
-    }
-  });
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLead, setSelectedLead] = useState<LeadType>();
   const [showRejectModal, setShowRejectModal] = useState(false);

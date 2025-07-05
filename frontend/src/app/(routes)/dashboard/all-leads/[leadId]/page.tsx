@@ -4,6 +4,7 @@ import useAgent from "@/hooks/useAgent";
 import axiosInstance from "@/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight } from "lucide-react"
+import Image from "next/image";
 import Link from "next/link"
 import { use } from "react";
 
@@ -34,7 +35,7 @@ const LeadPage = ({ params }: LeadPageProps) => {
         <ChevronRight size={20} className="opacity-[.8]"/>
         <Link href={"/dashboard/all-leads"} className="text-[#80Deea] cursor-pointer">Your Leads</Link>
         <ChevronRight size={20} className="opacity-[.8]"/>
-        <span className="">Lead's Details</span>
+        <span className="">Lead&apos;s Details</span>
       </div>
 
       <div className="mt-8 p-6">
@@ -93,7 +94,7 @@ const LeadPage = ({ params }: LeadPageProps) => {
                             {visit.images.length > 0 ? (
                               <div className="flex gap-4 flex-wrap">
                                 {visit.images.map((imgUrl: string, i: number) => (
-                                  <img
+                                  <Image
                                     key={i}
                                     src={imgUrl}
                                     alt="Visit Image"

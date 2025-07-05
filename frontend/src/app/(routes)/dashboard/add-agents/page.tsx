@@ -16,7 +16,7 @@ interface AgentType {
 }
 
 const AddReferralAgentPage = () => {
-  const { register, control, reset, handleSubmit, formState : { errors }} = useForm({
+  const { reset } = useForm({
     defaultValues : {
         referralIds : [],
     }

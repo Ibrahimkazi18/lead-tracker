@@ -54,7 +54,7 @@ const DashboardPage = () => {
     }
   });
 
-  const { data: topAgents, isLoading: loadingTopAgents } = useQuery({
+  const { data: topAgents } = useQuery({
     queryKey: ["topAgents"],
     queryFn: async () => {
       const res = await axiosInstance.get("/get-top-agents");
@@ -82,7 +82,7 @@ const DashboardPage = () => {
   return (
     <div className="w-full min-h-screen p-8 text-white">
       <div className="flex justify-between items-center mb-1">
-        <h2 className="text-2xl text-white font-semibold">{agent?.name.split(" ")[0]}'s Dashboard</h2>
+        <h2 className="text-2xl text-white font-semibold">{agent?.name.split(" ")[0]}&apos;s Dashboard</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">

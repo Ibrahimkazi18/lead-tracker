@@ -17,11 +17,6 @@ interface AgentType {
 }
 
 const AllReferralAgentPage = () => {
-  const { register, control, reset, handleSubmit, formState : { errors }} = useForm({
-    defaultValues : {
-        referralIds : [],
-    }
-  });
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAgent, setSelectedAgent] = useState<any>();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
