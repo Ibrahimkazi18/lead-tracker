@@ -69,8 +69,6 @@ axiosInstance.interceptors.response.use(
                 const refreshEndpoint = isAdminRoute
                     ? "/refresh-admin-token"
                     : "/refresh-token";
-
-                console.log("refresh endpoint", refreshEndpoint);
                     
                 await axios.post(
                     `${process.env.NEXT_PUBLIC_SEVER_URI}/${refreshEndpoint}`,

@@ -21,7 +21,6 @@ const SubscriptionPlansPage = () => {
 
   useEffect(() => {
     const yourUpiId = process.env.NEXT_PUBLIC_UPI_ID as string;
-    console.log("id: ", yourUpiId);
     setUpiId(yourUpiId);
   }, [])
 

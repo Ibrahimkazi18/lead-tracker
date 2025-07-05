@@ -46,8 +46,6 @@ const DashboardPage = () => {
   const { data: revenue } = useRevenue();
   const { data: monthlyRevenue } = useMonthlyRevenue();
 
-  console.log(monthlyRevenue);
-
   const monthlyChartData = useMemo(() => {
     if (!plans) return [];
 

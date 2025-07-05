@@ -59,7 +59,6 @@ const AddLeadPage = () => {
 
   const onSubmit = (data : any) => {
     setLoading(true);
-    console.log(data);
     createLeadMutation.mutate(data);
   }
 

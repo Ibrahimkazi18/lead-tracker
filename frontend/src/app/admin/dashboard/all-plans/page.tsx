@@ -135,8 +135,6 @@ const AllPlansPage = () => {
 
   const updatePlanMutation = useMutation({
     mutationFn : async ({ planId, data }: { planId: string; data: any }) => {
-      console.log("planId:", planId);
-      console.log("data:", data);
       await axiosInstance.put(`/update-plan/${planId}`, data );
     },
 

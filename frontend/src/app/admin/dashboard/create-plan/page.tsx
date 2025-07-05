@@ -42,7 +42,6 @@ const CreatePlanPage = () => {
 
   const onSubmit = (data : any) => {
     setLoading(true);
-    console.log(data);
     createPlanMutation.mutate(data);
   }
 

@@ -23,8 +23,6 @@ const LeadPage = ({ params }: LeadPageProps) => {
     }
   });
 
-  console.log(lead);
-
   return (
     <div className="w-full min-h-screen p-8 text-white">
       <div className="flex justify-between items-center mb-1">

@@ -27,12 +27,10 @@ app.use(cookieParser());
 app.use("/api", router);
 
 cron.schedule("0 0 * * *", () => {
-  console.log("Cron job fired");
   archiveOldLeads()
 });
 
 cron.schedule("0 0 * * *", async () => {
-  console.log("Cron job fired")
   const now = new Date();
 
   const expiredSubscriptions = await prisma.agentSubscription.findMany({
@@ -55,7 +53,6 @@ cron.schedule("0 0 * * *", async () => {
   }
 });
 
-redis.on("connect", () => console.log("Redis connected!"));
 redis.on("error", (err) => console.error("Redis error:", err));
 
 // Server start

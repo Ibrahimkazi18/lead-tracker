@@ -33,8 +33,6 @@ const UpdateModal = ({ plan, onClose, onSubmit }: UpdateModalProps) => {
   const handleSubmit = () => {
     if (!name || !description || !price || !duration) return;
 
-    console.log("in handle submit");
-
     onSubmit({
       name,
       description,
