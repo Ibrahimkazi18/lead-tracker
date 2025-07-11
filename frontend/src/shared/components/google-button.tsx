@@ -247,7 +247,6 @@ export const CompactGoogleButton = () => {
         picture: payload.picture,
       })
 
-      // Send to backend
       const result = await fetch(`${process.env.NEXT_PUBLIC_SEVER_URI}/google-auth`, {
         method: "POST",
         credentials: "include",
@@ -286,7 +285,13 @@ export const CompactGoogleButton = () => {
       window.google.accounts.id.initialize({
         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
         callback: handleCredentialResponse,
-      })
+        auto_select: false,
+        cancel_on_tap_outside: true,
+        context: 'signin',
+        ux_mode: 'popup',
+        itp_support: true,            // for iOS/Safari
+        use_fedcm_for_prompt: true,
+      });
     }
   }, [])
 
