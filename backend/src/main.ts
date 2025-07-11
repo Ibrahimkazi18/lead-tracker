@@ -20,6 +20,7 @@ app.use(cors({
   origin: ["http://localhost:3000", "https://openleads.vercel.app", "https://openleads.in", "https://www.openleads.in"],
   credentials: true
 }));
+app.options("*", cors());
 app.use(express.json());
 app.use(cookieParser());
 
