@@ -103,6 +103,58 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
 };
 
 
+export const completeProfile = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { mobile, email, name } = req.body;
+
+    console.log(email);
+
+    if (!mobile || !email) {
+      return next(new ValidationError("Missing required fields."));
+    }
+
+    const mobileRegex = /^[6-9]\d{9}$/;
+    if (!mobileRegex.test(mobile)) {
+      return next(new ValidationError("Invalid mobile number format."));
+    }
+
+    const user = await prisma.agent.findUnique({ where: { email } });
+
+    if (!user) {
+      return next(new ValidationError("User not found."));
+    }
+
+    const existingMobile = await prisma.agent.findFirst({
+      where: {
+        phone: mobile,
+        NOT: { email }
+      }
+    });
+
+    if (existingMobile) {
+      return next(new ValidationError("Mobile number already in use."));
+    }
+
+    const updatedUser = await prisma.agent.update({
+      where: { email },
+      data: { phone: mobile },
+    });
+
+    return res.status(200).json({
+      message: "Profile completed successfully.",
+      user: {
+        id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        phone: updatedUser.mobile,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+
 // Register a new user 
 export const userRegistration = async (req:Request, res:Response, next:NextFunction) => {
     try {
@@ -133,9 +185,9 @@ export const userRegistration = async (req:Request, res:Response, next:NextFunct
 // Verify user with otp
 export const verifyUser = async (req:Request, res:Response, next:NextFunction) => { 
     try {
-        const { email, otp, name, password} = req.body;
+        const { email, otp, name, password, phone} = req.body;
 
-        if ( !email || !otp || !name || !password ) {
+        if ( !email || !otp || !name || !password || !phone ) {
             throw next(new ValidationError("All fileds are required!"));
         }
 
@@ -161,6 +213,7 @@ export const verifyUser = async (req:Request, res:Response, next:NextFunction) =
             data : {
                 name: name,
                 email: email,
+                phone: phone,
                 password: hashedPassword,
                 subscriptionStart: new Date(),
                 subscriptionEnd: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
@@ -445,6 +498,9 @@ export const deleteAgentAccount = async (req: Request, res: Response, next: Next
     }
 
     await prisma.visit.deleteMany({ where: { lead: { agentId } } });
+    await prisma.agentSubscription.deleteMany({
+      where: { agentId }
+    });
     await prisma.lead.deleteMany({ where: { agentId } });
 
     await prisma.agent.delete({

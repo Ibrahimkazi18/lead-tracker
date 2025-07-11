@@ -47,7 +47,7 @@ model Agent {
   email               String             @unique
   password            String?  
   image               String?
-  phone               String             @unique
+  phone               String?            @unique
   referralIds         String[]
   leadExpiryDays      Float              @default(90)
   totalEarnings       Float              @default(0)            // total revenue from all converted leads

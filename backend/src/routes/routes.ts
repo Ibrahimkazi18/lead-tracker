@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { changeUserPassword, deleteAgentAccount, getUser, googleLogin, loginUser, logoutUser, refreshToken, resetUserPassword, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
+import { changeUserPassword, deleteAgentAccount, getUser, googleLogin, completeProfile, loginUser, logoutUser, refreshToken, resetUserPassword, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
 import isAuthenticated from "../utils/middleware/isAuthenticated";
 import { addVisit, createLead, deleteReferralAgent, getAgent, getAgentExpiryDays, getAgentLead, getAgentLeads, getAllAgents, getAllAgentsForReferral, getConvertedLeadsByMonth, getExpiringLeads, getLeadsByWeek, getMonthlyRevenueByAgent, getReferralAgents, getStatusDistribution, getTopAgents, getTotalRevenueByAgent, updateAgent, updateExpiryDays, updateLeadStatus } from "../controller/data.controller";
 import { changeAdminPassword, getAdmin, loginAdmin, logoutAdmin, refreshAdminToken, registerAdmin, verifyAdmin } from "../controller/admin.controller";
@@ -10,6 +10,7 @@ const router: Router = express.Router();
 
 // Authentication
 router.post("/google-auth", googleLogin);
+router.post("/complete-profile", isAuthenticated, completeProfile);
 router.post("/user-registration", userRegistration);
 router.post("/verify-user", verifyUser);
 router.post("/login-user", loginUser);

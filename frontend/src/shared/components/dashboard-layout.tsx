@@ -25,6 +25,7 @@ import {
 import Home from "@/assets/icons/home"
 import useAgent from "@/hooks/useAgent"
 import toast from "react-hot-toast"
+import ThemeToggleButton from "@shared/components/theme-toggle"
 
 interface SidebarItemProps {
   icon: React.ReactNode
@@ -280,6 +281,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 />
                 <SidebarItem title="Logout" onClick={handleLogout} icon={<LogOut size={20} />} />
               </SidebarMenu>
+
             </div>
 
             {/* Footer */}
@@ -301,6 +303,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   </div>
                 </div>
               </div>
+
+              <ThemeToggleButton />
             </div>
           </div>
         </aside>
