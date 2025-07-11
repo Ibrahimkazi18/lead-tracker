@@ -5,7 +5,6 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import SidebarItem from "./sidebar-item"
 import SidebarMenu from "./sidebar-menu"
-import ThemeSwitcher from "./theme-switcher"
 import MobileMenuButton from "./mobile-menu-button"
 import Home from "@/assets/icons/home"
 
