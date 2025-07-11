@@ -17,7 +17,7 @@ interface GoogleProfile {
 const ModernGoogleButton = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [userProfile, setUserProfile] = useState<GoogleProfile | null>(null)
+  const [userProfile, setUserProfile] = useState<GoogleProfile | null>(null);
 
   const handleCredentialResponse = async (response: GoogleResponse) => {
     setIsLoading(true)
@@ -36,6 +36,8 @@ const ModernGoogleButton = () => {
         token: response.credential
       })
 
+      const data = result.data;
+
       if (result.status === 200) {
         localStorage.setItem(
           "tempUserProfile",
@@ -46,15 +48,14 @@ const ModernGoogleButton = () => {
           })
         )
 
-        const currentPath = window.location.pathname
-
         setTimeout(() => {
-          if (currentPath.includes("/login")) {
-            window.location.assign("/dashboard")
-          } else if (currentPath.includes("/sign-up")) {
+          if (!data.phoneExists) {
             window.location.assign("/complete-profile")
+          } else if (data.phoneExists) {
+            window.location.assign("/dashboard")
           }
-        }, 100)
+        }, 100);
+
       } else {
         const errorMessage = result.data?.message || "Google Sign In failed."
         setError(errorMessage)

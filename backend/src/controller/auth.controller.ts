@@ -76,7 +76,7 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
       });
     }
     else {
-      phoneExists = true;
+      phoneExists = user.phone !== null;
     }
     
     // Generate tokens
