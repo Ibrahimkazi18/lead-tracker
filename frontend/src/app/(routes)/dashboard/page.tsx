@@ -19,7 +19,7 @@ const DashboardPage = () => {
   const { data: weeklyLeads } = useQuery({
     queryKey: ["leadsByWeek"],
     queryFn: async () => {
-      const res = await axiosInstance.get(`/get-leads-by-week/${agent.id}`);
+      const res = await axiosInstance.get(`/get-leads-by-week/${agent?.id}`);
       return res.data.grouped.map((item : any) => ({
         ...item,
         week: new Date(item.week).toLocaleDateString("en-US", {
@@ -71,13 +71,19 @@ const DashboardPage = () => {
   });
 
   useEffect(() => {
+    if (!agent?.id) return;
+
     const fetchExpiring = async () => {
       const res = await axiosInstance.get(`/get-expiring-leads/${agent.id}`);
       setExpiringLeads(res.data.leads);
     };
 
     fetchExpiring();
-  }, []);
+  }, [agent?.id]);
+
+  if (!agent?.id) {
+    return <div className="p-8 text-white">Loading Dashboard...</div>;
+  }
 
   return (
     <div className="w-full min-h-screen p-8 text-white">

@@ -61,10 +61,14 @@ export const getAgentExpiryDays = async (req: Request, res: Response, next: Next
 
 export const getAllAgentsForReferral = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { agentId } = req.query;
+    const { agentId, phone } = req.query;
 
     if (!agentId || typeof agentId !== "string") {
       res.status(400).json({ message: "agentId is required" });
+      return;
+    }
+    if (!phone || typeof phone !== "string") {
+      res.status(400).json({ message: "phone is required" });
       return;
     }
 
@@ -85,11 +89,13 @@ export const getAllAgentsForReferral = async (req: Request, res: Response, next:
         id: {
           notIn: [agentId, ...(currentAgent.referralIds || [])],
         },
+        phone
       },
       select: {
         id: true,
         name: true,
         email: true,
+        phone: true
       },
     });
 
@@ -212,10 +218,11 @@ export const createLead = async (req: any, res: Response, next: NextFunction) =>
             howHeard,
             projectDetail,
             location,
-            referredBy
+            referredBy,
+            createdAt
         } = req.body;
 
-        if(!agentId || !contactNo || !name || !residenceAdd ||  !email || !requirement || !budget || !howHeard || !location) {
+        if(!agentId || !contactNo || !name || !residenceAdd || !requirement || !budget || !howHeard || !location) {
             throw next(new ValidationError("Some Fields are Missing."));
         }
 
@@ -249,6 +256,7 @@ export const createLead = async (req: any, res: Response, next: NextFunction) =>
                   agentId,
                   projectDetail,
                   location,
+                  createdAt: createdAt ? new Date(createdAt) : new Date(),
                   referredBy : {
                     connect : {id : referredBy}
                 }
@@ -272,6 +280,7 @@ export const createLead = async (req: any, res: Response, next: NextFunction) =>
                   agentId,
                   projectDetail,
                   location,
+                  createdAt: createdAt ? new Date(createdAt) : new Date()
               },
           });
 

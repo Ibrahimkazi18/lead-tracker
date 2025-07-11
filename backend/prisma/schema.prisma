@@ -47,6 +47,7 @@ model Agent {
   email               String             @unique
   password            String?  
   image               String?
+  phone               String             @unique
   referralIds         String[]
   leadExpiryDays      Float              @default(90)
   totalEarnings       Float              @default(0)            // total revenue from all converted leads
@@ -65,7 +66,7 @@ model Lead {
   name                String
   residenceAdd        String
   contactNo           String
-  email               String
+  email               String?
   requirement         Requirement
   budget              String
   howHeard            HowHeard
@@ -79,7 +80,7 @@ model Lead {
   rejectedAt          DateTime?
   visits              Visit[] 
   expectedRevenue     Float?  
-  createdAt           DateTime @default(now())
+  createdAt           DateTime
 }
 
 model Visit {

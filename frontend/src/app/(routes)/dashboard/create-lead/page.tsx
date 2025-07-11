@@ -14,7 +14,7 @@ const AddLeadPage = () => {
   const { register, reset , handleSubmit, formState : { errors }} = useForm({
     defaultValues : {
       name : "",
-      email: "",
+      email: null,
       residenceAdd : "",
       contactNo: "",
       projectDetail: "",
@@ -22,7 +22,8 @@ const AddLeadPage = () => {
       budget: "",
       howHeard: "",
       location: "",
-      referredBy: ""
+      referredBy: "",
+      createdAt: new Date().toISOString().slice(0, 10),
     }
   });
 
@@ -129,11 +130,10 @@ const AddLeadPage = () => {
 
             <div className="mt-4">
               <Input
-                label="Email *"
+                label="Email"
                 type="text"
                 placeholder="abc@xyz.com"
                 {...register("email", { 
-                  required : "Email is required!",
                   pattern: {
                     value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                     message: "Invalid email address."
@@ -203,10 +203,10 @@ const AddLeadPage = () => {
           <div className="w-full">
             <div className="mt-4">
               <Input
-                label="Location *"
+                label="Search Area *"
                 type="text"
-                placeholder="Enter Location"
-                {...register("location", { required : "Location is required!"})}
+                placeholder="Enter Search Area"
+                {...register("location", { required : "Search Area is required!"})}
               />
               {errors.location && (
                 <p className="text-red-500 text-xs mt-1">
@@ -252,11 +252,25 @@ const AddLeadPage = () => {
             </div>
 
             <div className="mt-4">
+              <label className="block text-sm font-medium text-white mb-1">Date of Lead *</label>
+              <input
+                type="date"
+                {...register("createdAt", { required: "Date is required" })}
+                className="w-full bg-black border border-gray-600 rounded p-2 text-white focus:outline-none"
+              />
+              {errors.createdAt && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.createdAt.message as string}
+                </p>
+              )}
+            </div>
+
+            <div className="mt-4">
               <Input 
                 label="Project Detail (Max 50 words)"
                 type="textarea"
                 rows={7}
-                cols={10}
+                cols={8}
                 placeholder="Enter project description for quick overview"
                 {...register("projectDetail", { 
                   validate : (value) => {

@@ -160,9 +160,8 @@ const AllLeadsPage = () => {
                         <thead>
                             <tr className="border-b border-gray-800">
                                 <th className="p-3 text-left">Name</th>
-                                <th className="p-3 text-left">Email</th>
                                 <th className="p-3 text-left">Mobile</th>
-                                <th className="p-3 text-left">Location</th>
+                                <th className="p-3 text-left">Search Area</th>
                                 <th className="p-3 text-left">Created</th>
                                 <th className="p-3 text-left">Actions</th>
                             </tr>
@@ -176,7 +175,6 @@ const AllLeadsPage = () => {
                                         className="border-b border-gray-800 hover:bg-gray-800 transition"
                                     >
                                         <td className="p-3">{lead?.name}</td>
-                                        <td className="p-3">{lead?.email}</td>
                                         <td className="p-3">{lead?.contactNo}</td>
                                         <td className="p-3 truncate">{lead?.location}</td>
                                         <td className="p-3">{formatDate(lead?.createdAt)}</td>
