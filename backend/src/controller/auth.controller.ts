@@ -42,8 +42,12 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
 
     let user = await prisma.agent.findUnique({ where: { email } });
 
+    let phoneExists;
+
     // Create user if not found
     if (!user) {
+      phoneExists = false;
+
       user = await prisma.agent.create({
         data: {
           email,
@@ -71,6 +75,9 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
         },
       });
     }
+    else {
+      phoneExists = true;
+    }
     
     // Generate tokens
     const accessToken = jwt.sign(
@@ -96,6 +103,7 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
         name: user.name,
         email: user.email,
       },
+      phoneExists,
     });
   } catch (error) {
     return next(error);
