@@ -48,7 +48,14 @@ const ModernGoogleButton = () => {
             })
           );
 
-          window.location.assign("/complete-profile");    // for taking mobile number
+          const currentPath = window.location.pathname;
+
+          if (currentPath.includes("/login")) {
+            window.location.assign("/dashboard");
+          } else if (currentPath.includes("/sign-up")) {
+            window.location.assign("/complete-profile");
+          }
+
         }, 100)
       } else {
         const errorMessage = result.data?.message || "Google Sign In failed."
@@ -77,9 +84,22 @@ const ModernGoogleButton = () => {
         cancel_on_tap_outside: true,
         context: 'signin',
         ux_mode: 'popup',
-        itp_support: true,            // for iOS/Safari
-        use_fedcm_for_prompt: true,
+        itp_support: true,
       });
+
+      window.google.accounts.id.prompt();
+
+      const btn = document.getElementById("google-btn");
+      if (btn) {
+        window.google.accounts.id.renderButton(btn, {
+          theme: "outline",
+          size: "large",
+          type: "standard",
+          shape: "pill",
+          logo_alignment: "left"
+        });
+      }
+
 
     } catch (err) {
       console.error("Failed to initialize Google Sign-In:", err)
@@ -105,6 +125,33 @@ const ModernGoogleButton = () => {
       setError("Google Sign-In is not available")
     }
   }
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.google?.accounts?.id) {
+      window.google.accounts.id.initialize({
+        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+        callback: handleCredentialResponse,
+        auto_select: false,
+        cancel_on_tap_outside: true,
+        context: 'signin',
+        ux_mode: 'popup',
+        itp_support: true,
+      });
+
+      window.google.accounts.id.prompt();
+
+      const btn = document.getElementById("google-btn");
+      if (btn) {
+        window.google.accounts.id.renderButton(btn, {
+          theme: "outline",
+          size: "large",
+          type: "standard",
+          shape: "pill",
+          logo_alignment: "left"
+        });
+      }
+    }
+  }, []);
 
   useEffect(() => {
     // Check if Google script is already loaded
@@ -182,9 +229,9 @@ const ModernGoogleButton = () => {
             <div className="w-10 h-10 bg-white rounded-full shadow-sm border border-slate-200 flex items-center justify-center">
               <div className="w-6 h-6 relative">
                 {/* Google "G" using CSS */}
-                <div className="absolute inset-0 rounded-full border-2 border-transparent bg-gradient-to-r from-blue-500 via-red-500 via-yellow-500 to-green-500 p-[1px]">
+                <div className="absolute inset-0 rounded-full border-2 border-transparent bg-gradient-to-r from-blue-500 via-red-500 to-green-500 p-[1px]">
                   <div className="w-full h-full bg-white rounded-full flex items-center justify-center">
-                    <span className="text-sm font-bold bg-gradient-to-r from-blue-500 via-red-500 via-yellow-500 to-green-500 bg-clip-text text-transparent">
+                    <span className="text-sm font-bold bg-gradient-to-r from-blue-500 via-red-500 to-green-500 bg-clip-text text-transparent">
                       G
                     </span>
                   </div>
@@ -214,7 +261,7 @@ const ModernGoogleButton = () => {
         </div>
 
         {/* Hover Effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-red-500/5 via-yellow-500/5 to-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
       </button>
 
       {/* Account Picker Indicator */}

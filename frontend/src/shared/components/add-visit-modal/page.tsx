@@ -75,7 +75,7 @@ const AddVisitModal = ({ title, onClose, description, onConfirm }: AddVisitModal
 
           {/* Visit Description */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
               <MessageSquare className="w-4 h-4" />
               Visit Description *
             </label>
@@ -90,7 +90,7 @@ const AddVisitModal = ({ title, onClose, description, onConfirm }: AddVisitModal
 
           {/* Image Upload */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
               <FileImage className="w-4 h-4" />
               Upload Images (Optional)
             </label>

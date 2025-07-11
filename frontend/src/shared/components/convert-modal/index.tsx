@@ -59,7 +59,7 @@ const ConvertModal = ({ title, onClose, description, onConfirm }: ConvertModalPr
 
           {/* Revenue Input */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
               <DollarSign className="w-4 h-4" />
               Expected Revenue (₹) *
             </label>

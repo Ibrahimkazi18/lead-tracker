@@ -71,7 +71,7 @@ const UpdateModal = ({ plan, onClose, onSubmit }: UpdateModalProps) => {
         <div className="p-6 space-y-6">
           {/* Plan Name */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
               <Tag className="w-4 h-4" />
               Plan Name *
             </label>
@@ -88,7 +88,7 @@ const UpdateModal = ({ plan, onClose, onSubmit }: UpdateModalProps) => {
 
           {/* Description */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
               <FileText className="w-4 h-4" />
               Description *
             </label>
@@ -108,7 +108,7 @@ const UpdateModal = ({ plan, onClose, onSubmit }: UpdateModalProps) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Price */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                 <DollarSign className="w-4 h-4" />
                 Price (₹) *
               </label>
@@ -127,7 +127,7 @@ const UpdateModal = ({ plan, onClose, onSubmit }: UpdateModalProps) => {
 
             {/* Duration */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
                 Duration (days) *
               </label>
