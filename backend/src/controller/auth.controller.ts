@@ -110,18 +110,21 @@ export const completeProfile = async (req: Request, res: Response, next: NextFun
     console.log(email);
 
     if (!mobile || !email) {
-      return next(new ValidationError("Missing required fields."));
+      next(new ValidationError("Missing required fields."));
+      return;
     }
 
     const mobileRegex = /^[6-9]\d{9}$/;
     if (!mobileRegex.test(mobile)) {
-      return next(new ValidationError("Invalid mobile number format."));
+      next(new ValidationError("Invalid mobile number format."));
+      return;
     }
 
     const user = await prisma.agent.findUnique({ where: { email } });
 
     if (!user) {
-      return next(new ValidationError("User not found."));
+      next(new ValidationError("User not found."));
+      return;
     }
 
     const existingMobile = await prisma.agent.findFirst({
@@ -132,7 +135,8 @@ export const completeProfile = async (req: Request, res: Response, next: NextFun
     });
 
     if (existingMobile) {
-      return next(new ValidationError("Mobile number already in use."));
+      next(new ValidationError("Mobile number already in use."));
+      return;
     }
 
     const updatedUser = await prisma.agent.update({
@@ -140,15 +144,16 @@ export const completeProfile = async (req: Request, res: Response, next: NextFun
       data: { phone: mobile },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Profile completed successfully.",
       user: {
         id: updatedUser.id,
         name: updatedUser.name,
         email: updatedUser.email,
-        phone: updatedUser.mobile,
+        phone: updatedUser.phone,
       },
     });
+
   } catch (error) {
     return next(error);
   }
