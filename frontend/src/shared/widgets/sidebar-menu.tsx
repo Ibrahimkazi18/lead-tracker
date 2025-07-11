@@ -1,16 +1,16 @@
-
+import type React from "react"
 interface MenuProps {
-    title : string;
-    children : React.ReactNode;
+  title: string
+  children: React.ReactNode
 }
 
-const SidebarMenu = ({ title, children } : MenuProps) => {
+const SidebarMenu = ({ title, children }: MenuProps) => {
   return (
-    <div className="block">
-        <h3 className="text-xs tracking-[0.04rem] pl-1">
-            {title}
-        </h3>
-        {children}
+    <div className="space-y-1">
+      <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-3 mb-2">
+        {title}
+      </h3>
+      <div className="space-y-1">{children}</div>
     </div>
   )
 }

@@ -1,161 +1,330 @@
-"use client";
-
-import useAgent from "@/hooks/useAgent";
-import { usePlanStatus } from "@/hooks/usePlan";
-import axiosInstance from "@/utils/axiosInstance";
-import { useQuery } from "@tanstack/react-query";
-import { ChevronRight } from "lucide-react"
+"use client"
+import useAgent from "@/hooks/useAgent"
+import { usePlanStatus } from "@/hooks/usePlan"
+import axiosInstance from "@/utils/axiosInstance"
+import { useQuery } from "@tanstack/react-query"
+import {
+  ChevronRight,
+  CreditCard,
+  Star,
+  Calendar,
+  DollarSign,
+  Check,
+  X,
+  Smartphone,
+  QrCode,
+  Shield,
+  Zap,
+  Crown,
+} from "lucide-react"
 import Link from "next/link"
-import { toast } from "react-hot-toast";
-import { useEffect, useState } from "react";
-import { QRCodeCanvas } from "qrcode.react";
+import { toast } from "react-hot-toast"
+import { useEffect, useState } from "react"
+import { QRCodeCanvas } from "qrcode.react"
 
 const SubscriptionPlansPage = () => {
-  const { agent } = useAgent();
-  const { isPlanActive } = usePlanStatus();
-
-  const [selectedPlan, setSelectedPlan] = useState<any>(null);
-  const [paymentRef, setPaymentRef] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [upiId, setUpiId] = useState("");
+  const { agent } = useAgent()
+  const { isPlanActive } = usePlanStatus()
+  const [selectedPlan, setSelectedPlan] = useState<any>(null)
+  const [paymentRef, setPaymentRef] = useState("")
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [upiId, setUpiId] = useState("")
 
   useEffect(() => {
-    const yourUpiId = process.env.NEXT_PUBLIC_UPI_ID as string;
-    setUpiId(yourUpiId);
+    const yourUpiId = process.env.NEXT_PUBLIC_UPI_ID as string
+    setUpiId(yourUpiId)
   }, [])
 
-  const yourName = process.env.NEXT_PUBLIC_UPI_ID as string;
-  
-  const { data : plans } = useQuery({
-    queryKey : ["plans"],
-    queryFn : async () => {
-      const response = await axiosInstance.get(`/get-all-plans-agent`);
-      return response?.data?.plans;
-    }
-  });
+  const yourName = process.env.NEXT_PUBLIC_UPI_ID as string
 
-  const getUPIUrl = (amount: number) =>
-  `upi://pay?pa=${upiId}&pn=${encodeURIComponent(yourName)}&am=${amount}&cu=INR`;
+  const { data: plans, isLoading } = useQuery({
+    queryKey: ["plans"],
+    queryFn: async () => {
+      const response = await axiosInstance.get(`/get-all-plans-agent`)
+      return response?.data?.plans
+    },
+  })
+
+  const getUPIUrl = (amount: number) => `upi://pay?pa=${upiId}&pn=${encodeURIComponent(yourName)}&am=${amount}&cu=INR`
 
   const openModal = (plan: any) => {
-    setSelectedPlan(plan);
-    setIsModalOpen(true);
-  };
+    setSelectedPlan(plan)
+    setIsModalOpen(true)
+  }
 
   const closeModal = () => {
-    setIsModalOpen(false);
-    setPaymentRef("");
-  };
+    setIsModalOpen(false)
+    setPaymentRef("")
+  }
 
   const handleManualPayment = async () => {
     if (!paymentRef) {
-      toast.error("Please enter UPI payment reference.");
-      return;
+      toast.error("Please enter UPI payment reference.")
+      return
     }
-
     try {
       await axiosInstance.post(`/request-subscription/${agent.id}`, {
         planId: selectedPlan.id || "",
         paymentRef,
-      });
-
-      toast.success("Payment request submitted for admin confirmation.");
-      closeModal();
+      })
+      toast.success("Payment request submitted for admin confirmation.")
+      closeModal()
     } catch (err) {
-      toast.error("Failed to submit payment request.");
+      toast.error("Failed to submit payment request.")
     }
-  };
+  }
+
+  const getPlanIcon = (index: number) => {
+    switch (index) {
+      case 0:
+        return <Shield className="w-6 h-6" />
+      case 1:
+        return <Zap className="w-6 h-6" />
+      case 2:
+        return <Crown className="w-6 h-6" />
+      default:
+        return <CreditCard className="w-6 h-6" />
+    }
+  }
 
   return (
-    <div className="w-full min-h-screen p-8 text-white">
-      <div className="flex justify-between items-center mb-1">
-        <h2 className="text-2xl text-white font-semibold">Buy Plan</h2>
-      </div>
-
-      <div className="flex items-center">
-        <Link href={"/dashboard"} className="text-[#80Deea] cursor-pointer">Dashboard</Link>
-        <ChevronRight size={20} className="opacity-[.8]"/>
-        <span className="">Available Plans</span>
-      </div>
-
-      {isPlanActive && (
-        <h2 className="mt-8">You Already Have an Active Plan.</h2>
-      )}
-
-      <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {plans?.map((plan: any, index: number) => {
-          const active = isPlanActive;
-
-          return (
-            <div key={plan?.id} className={`bg-gray-900 border border-gray-700 p-6 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 ${index === 1 ? "border-[#80Deea]" : ""}`}>
-              {index === 1 && (
-                <div className="text-sm text-[#80Deea] font-semibold mb-2">★ Most Popular</div>
-              )}
-              <h3 className="text-2xl font-bold mb-2">{plan?.name}</h3>
-              <p className="text-gray-300 text-sm mb-4 min-h-[64px]">{plan?.description}</p>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xl font-semibold text-white">₹{plan?.price}</span>
-                <span className="text-sm text-gray-400">{plan?.duration} days</span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-2">
+                  Subscription Plans
+                </h1>
+                <p className="text-slate-600 dark:text-slate-300">
+                  Choose the perfect plan to unlock premium features and grow your business
+                </p>
               </div>
-
-              <button
-                disabled={active}
-                onClick={() => openModal(plan)}
-                className={`w-full py-2 rounded-md font-medium transition ${
-                  active
-                    ? "bg-gray-600 cursor-not-allowed"
-                    : "bg-[#80Deea] hover:bg-[#4dd0e1] text-black"
-                }`}
-              >
-                {active ? "Active Plan" : "Buy Now"}
-              </button>
+              <div className="flex items-center text-sm text-slate-500 dark:text-slate-400">
+                <Link
+                  href="/dashboard"
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors font-medium"
+                >
+                  Dashboard
+                </Link>
+                <ChevronRight size={16} className="mx-2" />
+                <span>Available Plans</span>
+              </div>
             </div>
-          );
-        })}
+          </div>
+        </div>
 
-        {isModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
-            <div className="bg-[#111] rounded-lg p-6 w-full max-w-md border border-gray-700 relative">
-              <button
-                onClick={closeModal}
-                className="absolute top-3 right-3 text-gray-400 hover:text-white"
-              >
-                ✕
-              </button>
-
-              <h2 className="text-xl font-bold text-white mb-2">UPI Manual Payment</h2>
-              <p className="text-sm text-gray-400 mb-3">
-                Scan & pay ₹{selectedPlan?.price} to <span className="text-[#80Deea]">{upiId}</span>
-              </p>
-
-              <div className="flex justify-center mb-4">
-                <QRCodeCanvas
-                  value={getUPIUrl(selectedPlan?.price || 0)}
-                  size={180}
-                  bgColor="#000"
-                  fgColor="#fff"
-                />
+        {/* Active Plan Notice */}
+        {isPlanActive && (
+          <div className="mb-8">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 rounded-2xl p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                  <Check className="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-green-900 dark:text-green-100">Active Subscription</h3>
+                  <p className="text-green-700 dark:text-green-300">
+                    You already have an active plan. Enjoy all the premium features!
+                  </p>
+                </div>
               </div>
-
-              <label className="text-sm mb-1 block text-white">UPI Transaction ID</label>
-
-              <input
-                type="text"
-                className="w-full p-2 mb-4 rounded bg-black border border-gray-600 text-white"
-                placeholder="e.g. 3456GH78UPI"
-                value={paymentRef}
-                onChange={(e) => setPaymentRef(e.target.value)}
-              />
-              <button
-                onClick={handleManualPayment}
-                className="w-full py-2 bg-[#80Deea] text-black rounded hover:bg-[#4dd0e1] transition"
-              >
-                Submit Payment
-              </button>
             </div>
           </div>
         )}
 
+        {/* Plans Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {isLoading
+            ? [...Array(3)].map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-8 animate-pulse"
+                >
+                  <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded mb-4"></div>
+                  <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded mb-6"></div>
+                  <div className="h-8 bg-slate-200 dark:bg-slate-700 rounded mb-6"></div>
+                  <div className="h-10 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                </div>
+              ))
+            : plans?.map((plan: any, index: number) => {
+                const active = isPlanActive
+                const isPopular = index === 1
+                return (
+                  <div
+                    key={plan?.id}
+                    className={`relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
+                      isPopular
+                        ? "border-blue-500 dark:border-blue-400 ring-2 ring-blue-500/20"
+                        : "border-slate-200 dark:border-slate-700"
+                    }`}
+                  >
+                    {/* Popular Badge */}
+                    {isPopular && (
+                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg">
+                          <Star className="w-4 h-4 fill-current" />
+                          Most Popular
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="p-8">
+                      {/* Plan Header */}
+                      <div className="text-center mb-8">
+                        <div
+                          className={`inline-flex p-3 rounded-xl mb-4 ${
+                            isPopular
+                              ? "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400"
+                              : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400"
+                          }`}
+                        >
+                          {getPlanIcon(index)}
+                        </div>
+                        <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">{plan?.name}</h3>
+                        <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed min-h-[48px]">
+                          {plan?.description}
+                        </p>
+                      </div>
+
+                      {/* Pricing */}
+                      <div className="text-center mb-8">
+                        <div className="flex items-center justify-center gap-2 mb-2">
+                          <DollarSign className="w-5 h-5 text-slate-500" />
+                          <span className="text-4xl font-bold text-slate-900 dark:text-white">₹{plan?.price}</span>
+                        </div>
+                        <div className="flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400">
+                          <Calendar className="w-4 h-4" />
+                          <span className="text-sm">{plan?.duration} days validity</span>
+                        </div>
+                      </div>
+
+                      {/* CTA Button */}
+                      <button
+                        disabled={active}
+                        onClick={() => openModal(plan)}
+                        className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
+                          active
+                            ? "bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed"
+                            : isPopular
+                              ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl"
+                              : "bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white shadow-lg hover:shadow-xl"
+                        }`}
+                      >
+                        {active ? (
+                          <>
+                            <Check className="w-4 h-4" />
+                            Active Plan
+                          </>
+                        ) : (
+                          <>
+                            <CreditCard className="w-4 h-4" />
+                            Choose Plan
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+        </div>
+
+        {/* Payment Modal */}
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md relative overflow-hidden">
+              {/* Modal Header */}
+              <div className="p-6 border-b border-slate-200 dark:border-slate-700">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">UPI Payment</h2>
+                    <p className="text-slate-600 dark:text-slate-300 text-sm">Complete your subscription payment</p>
+                  </div>
+                  <button
+                    onClick={closeModal}
+                    className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                  >
+                    <X className="w-5 h-5 text-slate-500" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Modal Content */}
+              <div className="p-6 space-y-6">
+                {/* Plan Summary */}
+                <div className="bg-slate-50 dark:bg-slate-700 rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold text-slate-900 dark:text-white">{selectedPlan?.name}</span>
+                    <span className="text-2xl font-bold text-slate-900 dark:text-white">₹{selectedPlan?.price}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 text-sm">
+                    <Calendar className="w-4 h-4" />
+                    <span>{selectedPlan?.duration} days validity</span>
+                  </div>
+                </div>
+
+                {/* Payment Instructions */}
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <Smartphone className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <span className="font-medium text-slate-900 dark:text-white">Scan & Pay</span>
+                  </div>
+                  <p className="text-slate-600 dark:text-slate-300 text-sm mb-4">
+                    Scan the QR code with any UPI app to pay{" "}
+                    <span className="font-semibold text-blue-600 dark:text-blue-400">₹{selectedPlan?.price}</span> to{" "}
+                    <span className="font-semibold">{upiId}</span>
+                  </p>
+
+                  {/* QR Code */}
+                  <div className="flex justify-center mb-6">
+                    <div className="p-4 bg-white rounded-xl shadow-inner border border-slate-200">
+                      <QRCodeCanvas
+                        value={getUPIUrl(selectedPlan?.price || 0)}
+                        size={180}
+                        bgColor="#ffffff"
+                        fgColor="#000000"
+                        level="M"
+                        includeMargin={true}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Transaction ID Input */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                    UPI Transaction ID *
+                  </label>
+                  <div className="relative">
+                    <QrCode className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      placeholder="e.g., 3456GH78UPI"
+                      value={paymentRef}
+                      onChange={(e) => setPaymentRef(e.target.value)}
+                    />
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Enter the transaction ID you received after making the payment
+                  </p>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  onClick={handleManualPayment}
+                  disabled={!paymentRef.trim()}
+                  className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl disabled:shadow-md transition-all duration-200 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <Check className="w-4 h-4" />
+                  Submit Payment
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
