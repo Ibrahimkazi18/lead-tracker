@@ -79,9 +79,9 @@ function ThemeToggle() {
   }
 
   const options: { value: Theme; icon: typeof Sun; label: string }[] = [
-    { value: "light", icon: Sun },
-    { value: "dark", icon: Moon },
-    { value: "system", icon: Monitor },
+    { value: "light", icon: Sun, label: "Light" },
+    { value: "dark", icon: Moon, label: "Dark" },
+    { value: "system", icon: Monitor, label: "Sys" },
   ]
 
   return (
@@ -107,7 +107,7 @@ function ThemeToggle() {
           return (
             <button
               key={option.value}
-              ref={(el) => (buttonsRef.current[index] = el)}
+              ref={(el) => { buttonsRef.current[index] = el; }}
               onClick={() => handleThemeChange(option.value)}
               className={`relative flex-1 flex items-center justify-center gap-1.5 px-2 py-2 text-sm font-medium rounded-md transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-100 dark:focus:ring-offset-slate-800 min-w-0 ${
                 isActive
