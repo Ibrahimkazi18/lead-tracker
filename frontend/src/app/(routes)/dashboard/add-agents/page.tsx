@@ -35,6 +35,8 @@ const AddReferralAgentPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["referral-agents"] })
+      toast.success("Added agent succesfully!");
+      setAllAgents([]);
       reset()
     },
   })

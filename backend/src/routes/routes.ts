@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { changeUserPassword, deleteAgentAccount, getUser, googleLogin, completeProfile, loginUser, logoutUser, refreshToken, resetUserPassword, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
 import isAuthenticated from "../utils/middleware/isAuthenticated";
-import { addVisit, createLead, deleteReferralAgent, getAgent, getAgentExpiryDays, getAgentLead, getAgentLeads, getAllAgents, getAllAgentsForReferral, getConvertedLeadsByMonth, getExpiringLeads, getLeadsByWeek, getMonthlyRevenueByAgent, getReferralAgents, getStatusDistribution, getTopAgents, getTotalRevenueByAgent, updateAgent, updateExpiryDays, updateLeadStatus } from "../controller/data.controller";
+import { addVisit, createLead, deleteReferralAgent, getAgent, getAgentExpiryDays, getAgentLead, getAgentLeadNotPending, getAgentLeads, getAgentLeadsStatus, getAllAgents, getAllAgentsForReferral, getConvertedLeadsByMonth, getExpiringLeads, getLeadsByWeek, getMonthlyRevenueByAgent, getReferralAgents, getStatusDistribution, getTopAgents, getTotalRevenueByAgent, updateAgent, updateExpiryDays, updateLeadStatus } from "../controller/data.controller";
 import { changeAdminPassword, getAdmin, loginAdmin, logoutAdmin, refreshAdminToken, registerAdmin, verifyAdmin } from "../controller/admin.controller";
 import isAdminAuthenticated from "../utils/middleware/isAdminAuthenticated";
 import { confirmSubscription, createPlan, deletePlan, getActiveAgentPlan, getAdminMonthlyRevenueStats, getAdminRevenueStats, getAllActivePlans, getAllPlans, getPendingRequests, getPlan, getPlanWiseRevenueStats, rejectSubscription, requestSubscription, setDefaultPlan, updatePlan } from "../controller/subscription.controller";
@@ -43,7 +43,9 @@ router.post("/create-lead", isAuthenticated, createLead);
 router.put("/add-visit", isAuthenticated, addVisit);
 router.put("/update-lead-status", isAuthenticated, updateLeadStatus);
 router.get("/get-agent-leads/:agentId", isAuthenticated, getAgentLeads);
+router.get("/get-agent-leads-by-status/:agentId", isAuthenticated, getAgentLeadsStatus);
 router.get("/get-agent-leads/:agentId/:leadId", isAuthenticated, getAgentLead);
+router.get("/get-agent-leads-not-pending/:agentId/:leadId", isAuthenticated, getAgentLeadNotPending);
 
 // fetching stats
 router.get("/get-leads-by-week/:agentId", isAuthenticated, getLeadsByWeek);

@@ -21,6 +21,8 @@ import {
   Sun,
   Moon,
   Monitor,
+  CheckCircle,
+  XCircle,
 } from "lucide-react"
 import Home from "@/assets/icons/home"
 import useAgent from "@/hooks/useAgent"
@@ -195,7 +197,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <div className="flex flex-col h-full">
             {/* Header */}
             <div className="p-6 border-b border-slate-200 dark:border-slate-700">
-              <Link href="/" className="block">
+              <Link href="/dashboard" className="block">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="p-2 bg-blue-600 rounded-lg">
                     <Building2 className="w-6 h-6 text-white" />
@@ -248,10 +250,22 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   icon={<SquarePlus size={20} />}
                 />
                 <SidebarItem
-                  title="All Leads"
+                  title="Active Leads"
                   isActive={activeSidebar.startsWith("/dashboard/all-leads")}
                   href="/dashboard/all-leads"
                   icon={<MapPinHouse size={20} />}
+                />
+                <SidebarItem
+                  title="Converted Leads"
+                  isActive={activeSidebar.startsWith("/dashboard/converted-leads")}
+                  href="/dashboard/converted-leads"
+                  icon={<CheckCircle size={20} />}
+                />
+                <SidebarItem
+                  title="Dropped Leads"
+                  isActive={activeSidebar.startsWith("/dashboard/rejected-leads")}
+                  href="/dashboard/rejected-leads"
+                  icon={<XCircle size={20} />}
                 />
               </SidebarMenu>
 

@@ -18,25 +18,13 @@ export const archiveOldLeads = async () => {
     });
 
     for (const lead of expiredLeads) {
-      await prisma.leadHistory.create({
+      await prisma.lead.update({
+        where: { id: lead.agentId },
         data: {
-          originalLeadId: lead.id,
-          name: lead.name,
-          residenceAdd: lead.residenceAdd,
-          contactNo: lead.contactNo,
-          email: lead.email,
-          requirement: lead.requirement,
-          budget: lead.budget,
-          howHeard: lead.howHeard,
-          referredBy: lead.agentId ?? null,
-          projectDetail: lead.projectDetail,
-          location: lead.location,
-          createdAt: lead.createdAt,
+          status: "REJECTED",
+          rejectedAt: new Date(),
         },
       });
-
-      await prisma.visit.deleteMany({ where: { leadId: lead.id } });
-      await prisma.lead.delete({ where: { id: lead.id } });
     }
   }
 };

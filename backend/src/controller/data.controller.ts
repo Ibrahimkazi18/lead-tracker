@@ -392,7 +392,6 @@ export const getAgentLeads = async (req: Request, res: Response, next: NextFunct
       orderBy : { createdAt : "desc"},
     });
 
-    // Map the Prisma leads to match the frontend LeadType
     const formattedLeads = leads.map((lead) => {
       return {
         id: lead.id,
@@ -427,6 +426,66 @@ export const getAgentLeads = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+
+// get agent leads based on status
+export const getAgentLeadsStatus = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { agentId } = req.params; 
+    const { status } = req.query;
+
+    if (!status || typeof status !== "string") {
+      res.status(400).json({ message: "status is required" });
+      return;
+    }
+
+
+    const leads = await prisma.lead.findMany({
+      where: { agentId: agentId, status: status === "CONVERTED" ? "CONVERTED" : "REJECTED" },
+      include: {
+        visits: {
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+      },
+      orderBy : { createdAt : "desc"},
+    });
+
+    const formattedLeads = leads.map((lead) => {
+      return {
+        id: lead.id,
+        name: lead.name,
+        email: lead.email,
+        contactNo: lead.contactNo,
+        budget: lead.budget,
+        location: lead.location || "",
+        projectDetail: lead.projectDetail || "",
+        residenceAdd: lead.residenceAdd,
+        howHeard: lead.howHeard,
+        requirement: lead.requirement,
+        referredById: lead.referredById || "", 
+        agentId: lead.agentId,
+        status: lead.status,
+        expectedRevenue: lead.expectedRevenue,
+        createdAt: lead.createdAt.toISOString(),
+        convertedAt: lead.convertedAt?.toISOString(),
+        rejectedAt: lead.rejectedAt?.toISOString(),
+        visits: lead.visits.map((visit) => ({
+            id: visit.id,
+            leadId: visit.leadId,
+            images: visit.images,
+            descitption: visit.description || "",
+            createdAt: visit.createdAt.toISOString(),
+        })),
+      };
+    });
+
+    res.status(200).json({ formattedLeads });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // single lead
 export const getAgentLead = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -434,6 +493,64 @@ export const getAgentLead = async (req: Request, res: Response, next: NextFuncti
 
     const lead = await prisma.lead.findFirst({
       where: { id: leadId, agentId: agentId, status: "PENDING" },
+      include : {
+        visits : {
+          orderBy : {
+            createdAt : "desc"
+          }
+        }, 
+        referredBy : true
+      },
+      orderBy : { createdAt : "asc"},
+    });
+
+    if(!lead) {
+      res.status(404).json({message : "No lead found"});
+      return;
+    }
+
+    // Map the Prisma leads to match the frontend LeadType
+    const formattedLead = {
+        id: lead.id,
+        name: lead.name,
+        email: lead.email,
+        contactNo: lead.contactNo,
+        budget: lead.budget,
+        location: lead.location || "",
+        projectDetail: lead.projectDetail || "",
+        residenceAdd: lead.residenceAdd,
+        howHeard: lead.howHeard,
+        requirement: lead.requirement,
+        referredById: lead.referredById || "", 
+        agentId: lead.agentId,
+        status: lead.status,
+        createdAt: lead.createdAt.toISOString(),
+        convertedAt: lead.convertedAt?.toISOString(),
+        rejectedAt: lead.rejectedAt?.toISOString(),
+        referredBy : lead.referredBy,
+        visits: lead.visits.map((visit) => ({
+            id: visit.id,
+            leadId: visit.leadId,
+            images: visit.images,
+            descitption: visit.description || "",
+            createdAt: visit.createdAt.toISOString(),
+        })),
+    };
+
+    res.status(200).json({ formattedLead });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+// single lead
+export const getAgentLeadNotPending = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { agentId, leadId } = req.params; 
+
+    const lead = await prisma.lead.findFirst({
+      where: { id: leadId, agentId: agentId },
       include : {
         visits : {
           orderBy : {
