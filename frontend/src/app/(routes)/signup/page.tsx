@@ -104,50 +104,6 @@ const Signup = () => {
   }
 
   return (
-    <>
-      <Head>
-        <title>Sign Up | Open Leads</title>
-        <meta name="description" content="Create your Open Leads account to streamline your real estate lead tracking and client management." />
-        <meta name="keywords" content="Open Leads signup, create account real estate CRM, property lead manager registration, agent sign up, real estate lead tracker" />
-
-        {/* Open Graph */}
-        <meta property="og:title" content="Sign Up | Open Leads" />
-        <meta property="og:description" content="Join Open Leads and simplify your real estate lead tracking." />
-        <meta property="og:url" content="https://www.openleads.in/signup" />
-        <meta property="og:site_name" content="Open Leads" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://www.openleads.in/favicon.ico" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="Open Leads Signup" />
-
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Sign Up | Open Leads" />
-        <meta name="twitter:description" content="Create your account on Open Leads and start managing your property leads effortlessly." />
-        <meta name="twitter:image" content="https://www.openleads.in/favicon.ico" />
-        
-        <Script
-          type="application/ld+json"
-          id="signup-json-ld"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebPage",
-              "name": "Sign Up - Open Leads",
-              "url": "https://www.openleads.in/signup",
-              "description": "Create an account on Open Leads to track your real estate leads.",
-              "about": {
-                "@type": "SoftwareApplication",
-                "name": "Open Leads",
-                "applicationCategory": "BusinessApplication",
-                "operatingSystem": "All",
-                "url": "https://www.openleads.in"
-              }
-            })
-          }}
-        />
-      </Head>
       
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
@@ -430,7 +386,6 @@ const Signup = () => {
           )} */}
         </div>
       </div>
-    </>
   )
 }
 
