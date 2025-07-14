@@ -2,7 +2,7 @@
 import useAgent from "@/hooks/useAgent"
 import axiosInstance from "@/utils/axiosInstance"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { ChevronRight, User, Mail, MapPin, Phone, DollarSign, Calendar, FileText, Building } from "lucide-react"
+import { ChevronRight, User, Mail, MapPin, Phone, DollarSign, Calendar, FileText, Building, IndianRupee } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -172,7 +172,7 @@ const AddLeadPage = () => {
                       <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <input
                         type="tel"
-                        placeholder="+1 (555) 123-4567"
+                        placeholder="+91 87654XXXXX"
                         {...register("contactNo", {
                           required: "Contact Number is required.",
                           pattern: {
@@ -194,15 +194,23 @@ const AddLeadPage = () => {
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Budget *</label>
                     <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input
-                        type="text"
-                        placeholder="e.g., 50L, 75L, 1CR"
+                      <select
                         {...register("budget", { required: "Budget is required!" })}
-                        className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      />
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      >
+                        <option value="">
+                          <IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          Select Budget
+                        </option>
+                        <option value="20L-50L">20L-50L</option>
+                        <option value="51L-1Cr">51L-1Cr</option>
+                        <option value="1Cr-2Cr">1Cr-2Cr</option>
+                        <option value="Any">Any</option>
+                      </select>
+                      {errors.budget && (
+                        <p className="text-red-500 text-sm">{errors.budget.message as string}</p>
+                      )}
                     </div>
-                    {errors.budget && <p className="text-red-500 text-sm">{errors.budget.message as string}</p>}
                   </div>
 
                   {/* Referred By */}
