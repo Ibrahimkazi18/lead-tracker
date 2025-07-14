@@ -20,70 +20,7 @@ import {
 } from "recharts"
 import { DollarSign, TrendingUp, Calendar, PieChartIcon, BarChart3, Clock, Award } from "lucide-react"
 import Script from "next/script"
-
-export const metadata = {
-  title: "Agent Dashboard | Open Leads",
-  description:
-    "Monitor your lead performance, revenue insights, top agent rankings, and lead status trends on the Open Leads dashboard.",
-  keywords: [
-    "real estate dashboard",
-    "lead tracking",
-    "revenue insights",
-    "real estate analytics",
-    "agent performance",
-    "Open Leads dashboard",
-    "openlead", 
-    "openleads", 
-    "lead management", 
-    "leads management", 
-    "lead manager", 
-    "leads manager", 
-    "agent management", 
-    "agents management", 
-    "real estate leads", 
-    "lead tracker", 
-    "leads tracker", 
-    "agent tracker", 
-    "agents tracker", 
-    "agent help website", 
-    "agents help website", 
-    "agent CRM", 
-    "agents CRM", 
-    "property sales management", 
-    "open leads", 
-    "real estate",
-    "real estate lead",
-    "real estate leads management",
-    "software", 
-    "lead management software", 
-    "lead managing software", 
-    "customer management", 
-    "customer tracking"
-  ],
-  openGraph: {
-    title: "Agent Dashboard | Open Leads",
-    description:
-      "Visualize your performance with live charts, top agents, expiring leads and lead status — all in one place.",
-    url: "https://www.openleads.in/dashboard",
-    siteName: "Open Leads",
-    type: "website",
-    images: [
-      {
-        url: "https://www.openleads.in/favicon.ico",
-        width: 1200,
-        height: 630,
-        alt: "Open Leads Dashboard Overview",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Agent Dashboard | Open Leads",
-    description: "Track your lead performance, conversions, and revenue in real-time.",
-    images: ["https://www.openleads.in/favicon.ico"],
-  },
-}
-
+import Head from "next/head"
 
 const DashboardPage = () => {
   const { agent } = useAgent()
@@ -183,7 +120,41 @@ const DashboardPage = () => {
 
   return (
     <>
-      <Script
+      <Head>
+        <title>Agent Dashboard | Open Leads</title>
+          <meta
+            name="description"
+            content="Monitor your lead performance, revenue insights, top agent rankings, and lead status trends on the Open Leads dashboard."
+          />
+          <meta
+            name="keywords"
+            content="real estate dashboard, lead tracking, revenue insights, real estate analytics, agent performance, Open Leads dashboard, openlead, openleads, lead management, leads management, lead manager, leads manager, agent management, agents management, real estate leads, lead tracker, leads tracker, agent tracker, agents tracker, agent help website, agents help website, agent CRM, agents CRM, property sales management, open leads, real estate, real estate lead, real estate leads management, software, lead management software, lead managing software, customer management, customer tracking"
+          />
+
+          {/* Open Graph */}
+          <meta property="og:title" content="Agent Dashboard | Open Leads" />
+          <meta
+            property="og:description"
+            content="Visualize your performance with live charts, top agents, expiring leads and lead status — all in one place."
+          />
+          <meta property="og:url" content="https://www.openleads.in/dashboard" />
+          <meta property="og:site_name" content="Open Leads" />
+          <meta property="og:type" content="website" />
+          <meta property="og:image" content="https://www.openleads.in/favicon.ico" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content="Open Leads Dashboard Overview" />
+
+          {/* Twitter Card */}
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content="Agent Dashboard | Open Leads" />
+          <meta
+            name="twitter:description"
+            content="Track your lead performance, conversions, and revenue in real-time."
+          />
+          <meta name="twitter:image" content="https://www.openleads.in/favicon.ico" />
+
+        <Script
           id="dashboard-json-ld"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -203,6 +174,7 @@ const DashboardPage = () => {
             }),
           }}
         />
+      </Head>
     
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">

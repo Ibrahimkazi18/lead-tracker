@@ -16,39 +16,6 @@ type FormData = {
   password: string
 }
 
-export const metadata = {
-  title: "Login | Open Leads",
-  description: "Log in to your Open Leads account to manage real estate leads effectively and efficiently.",
-  keywords: [
-    "Open Leads login",
-    "real estate CRM",
-    "lead tracker login",
-    "agent dashboard login",
-    "property lead manager login"
-  ],
-  openGraph: {
-    title: "Login | Open Leads",
-    description: "Access your Open Leads dashboard and start managing property leads seamlessly.",
-    url: "https://www.openleads.in/login",
-    siteName: "Open Leads",
-    type: "website",
-    images: [
-      {
-        url: "https://www.openleads.in/og-image-login.png",
-        width: 1200,
-        height: 630,
-        alt: "Open Leads Login"
-      }
-    ]
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Login | Open Leads",
-    description: "Securely sign in to Open Leads and manage your real estate leads.",
-    images: ["https://www.openleads.in/favicon.ico"]
-  }
-}
-
 const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
@@ -84,7 +51,37 @@ const Login = () => {
   return (
     <>
       <Head>
-        <script
+        <title>Login | Open Leads</title>
+        <meta
+          name="description"
+          content="Log in to your Open Leads account to manage real estate leads effectively and efficiently."
+        />
+        <meta
+          name="keywords"
+          content="Open Leads login, real estate CRM, lead tracker login, agent dashboard login, property lead manager login"
+        />
+
+        {/* Open Graph */}
+        <meta property="og:title" content="Login | Open Leads" />
+        <meta
+          property="og:description"
+          content="Access your Open Leads dashboard and start managing property leads seamlessly."
+        />
+        <meta property="og:url" content="https://www.openleads.in/login" />
+        <meta property="og:site_name" content="Open Leads" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://www.openleads.in/og-image-login.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Open Leads Login" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Login | Open Leads" />
+        <meta name="twitter:description" content="Securely sign in to Open Leads and manage your real estate leads." />
+        <meta name="twitter:image" content="https://www.openleads.in/favicon.ico" />
+
+        <Script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({

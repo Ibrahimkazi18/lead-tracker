@@ -10,6 +10,7 @@ import { useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import axios, { AxiosError } from "axios"
 import Script from "next/script"
+import Head from "next/head"
 
 type FormData = {
   name: string
@@ -17,40 +18,6 @@ type FormData = {
   password: string
   phone : string
 }
-
-export const metadata = {
-  title: "Sign Up | Open Leads",
-  description: "Create your Open Leads account to streamline your real estate lead tracking and client management.",
-  keywords: [
-    "Open Leads signup",
-    "create account real estate CRM",
-    "property lead manager registration",
-    "agent sign up",
-    "real estate lead tracker"
-  ],
-  openGraph: {
-    title: "Sign Up | Open Leads",
-    description: "Join Open Leads and simplify your real estate lead tracking.",
-    url: "https://www.openleads.in/signup",
-    siteName: "Open Leads",
-    type: "website",
-    images: [
-      {
-        url: "https://www.openleads.in/favicon.ico",
-        width: 1200,
-        height: 630,
-        alt: "Open Leads Signup"
-      }
-    ]
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Sign Up | Open Leads",
-    description: "Create your account on Open Leads and start managing your property leads effortlessly.",
-    images: ["https://www.openleads.in/favicon.ico"]
-  }
-}
-
 
 const Signup = () => {
   const [passwordVisible, setPasswordVisible] = useState(false)
@@ -138,26 +105,49 @@ const Signup = () => {
 
   return (
     <>
-      <Script
-        type="application/ld+json"
-        id="signup-json-ld"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebPage",
-            "name": "Sign Up - Open Leads",
-            "url": "https://www.openleads.in/signup",
-            "description": "Create an account on Open Leads to track your real estate leads.",
-            "about": {
-              "@type": "SoftwareApplication",
-              "name": "Open Leads",
-              "applicationCategory": "BusinessApplication",
-              "operatingSystem": "All",
-              "url": "https://www.openleads.in"
-            }
-          })
-        }}
-      />
+      <Head>
+        <title>Sign Up | Open Leads</title>
+        <meta name="description" content="Create your Open Leads account to streamline your real estate lead tracking and client management." />
+        <meta name="keywords" content="Open Leads signup, create account real estate CRM, property lead manager registration, agent sign up, real estate lead tracker" />
+
+        {/* Open Graph */}
+        <meta property="og:title" content="Sign Up | Open Leads" />
+        <meta property="og:description" content="Join Open Leads and simplify your real estate lead tracking." />
+        <meta property="og:url" content="https://www.openleads.in/signup" />
+        <meta property="og:site_name" content="Open Leads" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://www.openleads.in/favicon.ico" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Open Leads Signup" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Sign Up | Open Leads" />
+        <meta name="twitter:description" content="Create your account on Open Leads and start managing your property leads effortlessly." />
+        <meta name="twitter:image" content="https://www.openleads.in/favicon.ico" />
+        
+        <Script
+          type="application/ld+json"
+          id="signup-json-ld"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebPage",
+              "name": "Sign Up - Open Leads",
+              "url": "https://www.openleads.in/signup",
+              "description": "Create an account on Open Leads to track your real estate leads.",
+              "about": {
+                "@type": "SoftwareApplication",
+                "name": "Open Leads",
+                "applicationCategory": "BusinessApplication",
+                "operatingSystem": "All",
+                "url": "https://www.openleads.in"
+              }
+            })
+          }}
+        />
+      </Head>
       
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
