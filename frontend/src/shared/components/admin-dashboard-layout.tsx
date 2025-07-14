@@ -21,7 +21,7 @@ import {
   FolderKanban,
 } from "lucide-react"
 import Home from "@/assets/icons/home"
-import useAgent from "@/hooks/useAgent"
+import useAdmin from "@/hooks/useAdmin"
 import toast from "react-hot-toast"
 import ThemeToggleButton from "@shared/components/theme-toggle"
 
@@ -132,7 +132,7 @@ const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) => {
   const { activeSidebar, setActiveSidebar } = useSidebar()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathName = usePathname()
-  const { agent } = useAgent()
+  const { admin } = useAdmin()
   const router = useRouter()
 
   useEffect(() => {
@@ -204,7 +204,7 @@ const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) => {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>Hello, {agent?.name?.split(" ")[0] || "Admin"}</span>
+                  <span>Hello, {admin?.name?.split(" ")[0] || "Admin"}</span>
                 </div>
               </Link>
             </div>
@@ -275,15 +275,15 @@ const AdminDashboardLayout = ({ children }: AdminDashboardLayoutProps) => {
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-semibold">
-                      {agent?.name?.charAt(0)?.toUpperCase() || "U"}
+                      {admin?.name?.charAt(0)?.toUpperCase() || "U"}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
-                      {agent?.name || "User"}
+                      {admin?.name || "User"}
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                      {agent?.email || "user@example.com"}
+                      {admin?.email || "user@example.com"}
                     </p>
                   </div>
                 </div>
