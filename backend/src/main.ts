@@ -28,10 +28,6 @@ app.use(cookieParser());
 // Routes
 app.use("/api", router);
 
-app.get("/ping", (req, res) => {
-  res.status(200).send("OK");
-});
-
 cron.schedule("0 0 * * *", () => {
   archiveOldLeads()
 });

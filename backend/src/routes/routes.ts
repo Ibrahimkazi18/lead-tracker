@@ -1,12 +1,15 @@
 import express, { Router } from "express";
 import { changeUserPassword, deleteAgentAccount, getUser, googleLogin, completeProfile, loginUser, logoutUser, refreshToken, resetUserPassword, userForgotPassword, userRegistration, verifyForgotPassword, verifyUser } from "../controller/auth.controller";
 import isAuthenticated from "../utils/middleware/isAuthenticated";
-import { addVisit, createLead, deleteReferralAgent, getAgent, getAgentExpiryDays, getAgentLead, getAgentLeadNotPending, getAgentLeads, getAgentLeadsStatus, getAllAgents, getAllAgentsForReferral, getConvertedLeadsByMonth, getExpiringLeads, getLeadsByWeek, getMonthlyRevenueByAgent, getReferralAgents, getStatusDistribution, getTopAgents, getTotalRevenueByAgent, updateAgent, updateExpiryDays, updateLeadStatus } from "../controller/data.controller";
+import { addVisit, createLead, deleteReferralAgent, getAgent, getAgentExpiryDays, getAgentLead, getAgentLeadNotPending, getAgentLeads, getAgentLeadsStatus, getAllAgents, getAllAgentsForReferral, getConvertedLeadsByMonth, getExpiringLeads, getLeadsByWeek, getMonthlyRevenueByAgent, getReferralAgents, getStatusDistribution, getTopAgents, getTotalRevenueByAgent, ping, updateAgent, updateExpiryDays, updateLeadStatus } from "../controller/data.controller";
 import { changeAdminPassword, getAdmin, loginAdmin, logoutAdmin, refreshAdminToken, registerAdmin, verifyAdmin } from "../controller/admin.controller";
 import isAdminAuthenticated from "../utils/middleware/isAdminAuthenticated";
 import { confirmSubscription, createPlan, deletePlan, getActiveAgentPlan, getAdminMonthlyRevenueStats, getAdminRevenueStats, getAllActivePlans, getAllPlans, getPendingRequests, getPlan, getPlanWiseRevenueStats, rejectSubscription, requestSubscription, setDefaultPlan, updatePlan } from "../controller/subscription.controller";
 
 const router: Router = express.Router();
+
+//ping
+router.get("/ping", ping);
 
 // Authentication
 router.post("/google-auth", googleLogin);

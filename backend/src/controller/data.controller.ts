@@ -3,6 +3,11 @@ import prisma from "../utils/prisma";
 import { ValidationError } from "../packages";
 import { HowHeard, Requirement } from "@prisma/client";
 
+// ping function
+export const ping = async (req: Request, res: Response, next: NextFunction) => {
+  res.status(200).json({mes: "ok"});
+}
+
 // Fetch all the agents in the database
 export const getAllAgents = async (req: Request, res: Response, next: NextFunction) => {
   try {
